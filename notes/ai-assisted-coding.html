@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="AI 辅助开发与 Vibe Coding 工作流：明确任务边界、小步迭代、审查差异并验证结果。">
+  <title>AI 辅助开发闭环 · 刘一非</title>
+  <link rel="icon" href="../img/yifei-portrait.jpg" type="image/jpeg">
+  <link rel="stylesheet" href="../css/notes.css">
+</head>
+<body>
+  <div class="notes-wrap"><nav class="notes-nav" aria-label="主导航"><a class="notes-brand" href="../"><img src="../img/yifei-portrait.jpg" alt="">刘一非 · 工程手记</a><div class="notes-links"><a href="./">专题索引</a><a href="../">博客首页</a><a href="https://yifeiliu-1997.github.io/lyf-profile/">简历 ↗</a></div></nav></div>
+  <main class="article">
+    <header class="article-heading"><p class="article-kicker">AI DEVELOPMENT · VIBE CODING</p><h1>Vibe Coding 不等于跳过工程：AI 辅助开发闭环</h1><p class="article-deck">工具可以加快探索和实现，但需求范围、代码责任与交付验证仍要由开发者把关。我的工具箱包括 Codex、WorkBuddy 和 Resonix。</p><div class="article-meta"><time datetime="2026-09-26">整理于 2026-09-26</time><span>约 6 分钟</span><span>AI 辅助，不是无人审查</span></div></header>
+    <article class="article-content">
+      <p>我把 Vibe Coding 理解成一种高频的人机协作方式：先用自然语言建立目标，再通过运行结果持续调整。它适合快速探索和原型迭代，但“生成了代码”并不等于“功能正确”“改动安全”或“已经可以交付”。</p>
+      <h2>把一次协作拆成可检查的小步</h2>
+      <ol><li><strong>先描述结果。</strong>说明用户遇到的问题、期望行为和验收方式，而不是只给一串技术名词。</li><li><strong>补足上下文。</strong>交代相关目录、现有约定、运行方式、兼容范围与不允许改动的边界。</li><li><strong>限制改动范围。</strong>优先让助手检查现状并提出最小实现，再逐步改文件；避免一次要求“大改整个系统”。</li><li><strong>自己看 diff。</strong>关注多余依赖、配置/权限变更、异常路径、硬编码密钥和不相关文件。</li><li><strong>用可复现的检查收尾。</strong>执行针对性测试、构建或静态验证；核对结果并记录尚未验证的部分。</li></ol>
+      <h2>一个简洁的任务模板</h2>
+      <pre><code>目标：要解决什么用户问题？
+上下文：涉及哪些模块、技术和运行环境？
+边界：哪些文件、接口或行为不能改变？
+验收：什么输入应得到什么结果？
+验证：需要运行哪些测试或检查？
+交付：总结改动、风险和未验证事项。</code></pre>
+      <p>模板的作用不是增加仪式，而是把隐含假设摊开。如果任务涉及迁移、删除数据、权限、认证或兼容性，先明确约束和回滚方案，再让助手参与实现，通常比事后补救更省时间。</p>
+      <h2>三个容易忽略的检查点</h2>
+      <h3>测试要跟着改动走</h3><p>生成代码可能看起来合理，但边界条件、旧数据和平台差异仍需要验证。最小单元测试、现有相关测试和一个真实运行路径，往往比只看成功截图更有说服力。</p>
+      <h3>不要把敏感上下文当普通提示词</h3><p>提交源代码、日志、用户资料和内部配置前，确认工具与组织的数据处理规则；密钥不应写进 prompt、示例文件或公开仓库。工作目录和 agent 权限也应遵循最小必要范围。</p>
+      <h3>保留人工判断与责任</h3><p>AI 的建议可能过时、遗漏或误读项目约定。由开发者判断设计取舍、批准关键变更并对最终交付负责，才构成可靠的协作闭环。</p>
+      <div class="callout">实际使用中，我会按任务在 Codex、WorkBuddy、Resonix 等工具之间切换；不同工具的功能和配置可能不同，流程重点仍是清晰的任务边界、可检查的变更和真实验证。</div>
+      <h2>参考资料</h2>
+      <ul class="source-list"><li><a href="https://developers.openai.com/learn/codex" target="_blank" rel="noopener noreferrer">OpenAI Developers：Codex</a>（Codex 官方说明）</li><li><a href="../">回到博客首页的技能与项目概览</a></li></ul>
+    </article>
+    <aside class="article-end"><img src="../img/yifei-portrait.jpg" alt=""><p><a href="../about/">刘一非</a> · Python 平台、测试工具链与本地检索。AI 用来加速迭代，代码审查和测试仍由人负责。</p></aside>
+    <footer class="article-footer"><a href="./ceph-troubleshooting.html">← 上一篇：Ceph 健康状态排查</a><a href="./">回到专题索引 →</a></footer>
+  </main>
+  <footer class="notes-wrap notes-footer">© 2026 LIU YIFEI · HUMAN REVIEW IS PART OF THE LOOP</footer>
+</body>
+</html>

@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="学习笔记：从 RADOS、MON、OSD、PG 和 CRUSH 理解 Ceph 的控制面与数据放置。">
+  <title>Ceph 架构与数据放置 · 刘一非</title>
+  <link rel="icon" href="../img/yifei-portrait.jpg" type="image/jpeg">
+  <link rel="stylesheet" href="../css/notes.css">
+</head>
+<body>
+  <div class="notes-wrap"><nav class="notes-nav" aria-label="主导航"><a class="notes-brand" href="../"><img src="../img/yifei-portrait.jpg" alt="">刘一非 · 工程手记</a><div class="notes-links"><a href="./">专题索引</a><a href="../">博客首页</a><a href="https://yifeiliu-1997.github.io/lyf-profile/">简历 ↗</a></div></nav></div>
+  <main class="article">
+    <header class="article-heading"><p class="article-kicker">STORAGE · ARCHITECTURE / 学习整理</p><h1>Ceph 架构与数据放置：MON、OSD、PG、CRUSH</h1><p class="article-deck">把 Ceph 看成一套由集群状态、对象映射和存储守护进程协作的分布式系统：先弄清楚“数据在哪里”，再讨论“怎么扩容和恢复”。</p><div class="article-meta"><time datetime="2026-09-26">整理于 2026-09-26</time><span>约 6 分钟</span><span>概念笔记，不是生产部署记录</span></div></header>
+    <article class="article-content">
+      <p>这篇笔记从 Ceph 的 RADOS 层出发，串起几个常见名词。最有用的心智模型是：客户端借助集群映射计算对象的放置位置，再与负责该位置的 OSD 通信；Monitor 维护映射与集群状态，并不是所有读写都经过它转发。</p>
+      <h2>先分清守护进程各自做什么</h2>
+      <ul><li><strong>MON（Monitor）</strong>维护并分发集群映射和状态，通过 quorum 协调集群控制信息。</li><li><strong>OSD（Object Storage Daemon）</strong>负责对象数据的存储、复制、恢复和与客户端的数据交互，是主要数据面。</li><li><strong>MGR（Manager）</strong>提供管理模块、状态汇总和监控等能力；具体模块取决于启用的配置。</li><li><strong>MDS（Metadata Server）</strong>服务 CephFS 的文件系统元数据；使用 RBD 或直接 RADOS 对象时，不要把 MDS 当作通用数据代理。</li><li><strong>RGW（RADOS Gateway）</strong>在 RADOS 之上提供对象网关接口，常用于 S3 / Swift 风格的对象访问。</li></ul>
+      <p>因此，“Ceph 是一个进程”或“所有数据都经过 MON”都会让后续排查走偏。MON 的稳定性关系到集群映射与控制操作，OSD 状态则直接关系到数据副本和服务能力。</p>
+      <h2>对象怎样落到 OSD</h2>
+      <p>从逻辑上可以把一次放置过程概括为：</p>
+      <pre><code>client request
+  → pool / object identity
+  → placement group (PG)
+  → CRUSH rule + cluster topology
+  → acting set of OSDs</code></pre>
+      <p>对象属于某个 pool；对象标识经过哈希映射到 placement group（PG）；CRUSH 再结合放置规则和集群拓扑，为 PG 选择一组 OSD。客户端取得需要的映射后，可以直接与目标 OSD 通信，不需要一个中心目录逐对象回答“在哪块盘”。这类算法式放置让扩容和故障恢复可以根据新的拓扑重新计算位置。</p>
+      <p>PG 是组织和复制管理的逻辑单元，不是一个固定大小的物理分区。一个 PG 通常对应一组 acting OSD；其中主 OSD 负责协调该 PG 的客户端写入，其他副本按 pool 的保护策略同步。数据可用性、确认时机和恢复状态还受副本数、最小副本数及集群当前健康状态影响，不能只看一个参数。</p>
+      <h2>CRUSH 关心的是拓扑和故障域</h2>
+      <p>CRUSH map 描述设备层级和放置规则。规则不仅能限定选哪些设备，还能决定副本尽量分散到主机、机架或更高层级的故障域。副本数写成 3，并不自动等于“跨三个机架”：还要核对拓扑、规则和实际可用的 OSD。</p>
+      <p>增加或移除设备会改变放置结果，集群可能因此进行迁移和 backfill。扩容时要同时观察可用容量、恢复带宽和业务负载；只确认新 OSD 出现在列表中，还不足以说明数据已均衡或容灾设计正确。</p>
+      <h2>副本与纠删码是取舍，不是开关</h2>
+      <p>副本模式的逻辑较直观，读写和故障恢复的理解成本低，但冗余占用较多空间。纠删码通过数据块与校验块提供冗余，空间效率更高，却引入编码、恢复和工作负载适配的复杂度。选择时要结合对象大小、写入形态、恢复目标和实际测试；小规模实验数据不能直接替代生产容量评估。</p>
+      <div class="callout">我目前把这篇作为概念地图：遇到“副本放哪儿”“新增 OSD 后为何迁移”或“CephFS 为什么需要 MDS”时，可以先回到 pool → PG → CRUSH → OSD 这条路径。</div>
+      <h2>延伸阅读</h2>
+      <ul class="source-list"><li><a href="https://docs.ceph.com/en/latest/architecture/" target="_blank" rel="noopener noreferrer">Ceph 官方文档：Architecture</a></li><li><a href="https://docs.ceph.com/en/latest/rados/operations/crush-map/" target="_blank" rel="noopener noreferrer">Ceph 官方文档：CRUSH Maps</a></li><li><a href="https://docs.ceph.com/en/latest/rados/operations/" target="_blank" rel="noopener noreferrer">Ceph 官方文档：RADOS Operations</a></li></ul>
+    </article>
+    <aside class="article-end"><img src="../img/yifei-portrait.jpg" alt=""><p><a href="../about/">刘一非</a> · 软件平台与工具链研发。本文是根据官方文档整理的学习笔记，未把概念整理写成个人生产环境实战。</p></aside>
+    <footer class="article-footer"><a href="./">← 返回专题索引</a><a href="./cephadm-lab.html">下一篇：cephadm 实验路线 →</a></footer>
+  </main>
+  <footer class="notes-wrap notes-footer">© 2026 LIU YIFEI · SOURCE LINKS AT ARTICLE END</footer>
+</body>
+</html>

@@ -9,8 +9,9 @@
   <meta property="og:description" content="软件研发、工具平台与本地智能检索的学习和实践记录。">
   <meta property="og:type" content="website">
   <title>刘一非的博客 · 把技术做成作品</title>
-  <link rel="icon" href="./img/favicon_head.png">
+  <link rel="icon" href="./img/yifei-portrait.jpg" type="image/jpeg">
   <link rel="stylesheet" href="./css/portfolio.css">
+  <link rel="stylesheet" href="./css/readability.css">
 </head>
 <body class="blog-home">
   <a class="skip-link" href="#main">跳到正文</a>
@@ -42,7 +43,7 @@
         <div class="hero-art" aria-label="软件工程与系统连接的抽象插画">
           <div class="art-orbit orbit-one"></div>
           <div class="art-orbit orbit-two"></div>
-          <div class="art-core"><span>build<br>useful<br><b>things.</b></span></div>
+          <div class="art-core blog-avatar"><img src="./img/yifei-portrait.jpg" alt="刘一非个人头像" loading="lazy"></div>
           <span class="art-node node-a">Python</span>
           <span class="art-node node-b">SYSTEMS</span>
           <span class="art-node node-c">LOCAL AI</span>
@@ -72,10 +73,26 @@
     <section class="notes-section" id="notes">
       <div class="wrap">
         <div class="section-heading notes-heading">
-          <div><p class="eyebrow ink-eyebrow">THE NOTEBOOK <span>✳</span></p><h2>最近写下的，<br>都是一路走来的。</h2></div>
-          <a class="text-link dark-link" href="./archives/">全部文章 <span aria-hidden="true">↗</span></a>
+          <div><p class="eyebrow ink-eyebrow">ENGINEERING NOTES · 2026 <span>✳</span></p><h2>原理、实践，<br>还有持续学习。</h2></div>
+          <a class="text-link dark-link" href="./notes/">专题与文章 <span aria-hidden="true">↗</span></a>
         </div>
         <div class="notes-grid">
+          <a class="note-card note-main" href="./notes/ceph-architecture.html">
+            <div class="note-visual visual-ai"><span class="ai-ring ring-one"></span><span class="ai-ring ring-two"></span><span class="ai-core">Ceph</span><span class="ai-caption">RADOS · CRUSH · PG</span></div>
+            <div class="note-meta"><span>STORAGE · ARCHITECTURE</span><time datetime="2026-09-26">2026.09.26</time></div><h3>Ceph 架构与数据放置</h3><p>从 RADOS、PG、OSD 到 CRUSH，梳理对象如何找到合适的存储节点。</p><span class="note-arrow" aria-hidden="true">↗</span>
+          </a>
+          <a class="note-card" href="./notes/cephadm-lab.html">
+            <div class="note-visual visual-terminal"><span class="terminal-dots"><i></i><i></i><i></i></span><span class="terminal-path">~/lab/ceph</span><pre><b>$</b> cephadm bootstrap<br><em>MON · MGR · OSD</em><br><span>lab first. verify every disk.</span></pre><span class="visual-stamp">LAB<br>ROADMAP</span></div>
+            <div class="note-meta"><span>STORAGE · LAB</span><time datetime="2026-09-26">2026.09.26</time></div><h3>Cephadm 实验集群路线</h3><p>部署前置条件、集群初始化与设备核验清单；实验方案不等于生产经验。</p><span class="note-arrow" aria-hidden="true">↗</span>
+          </a>
+          <a class="note-card" href="./notes/ceph-troubleshooting.html">
+            <div class="note-visual visual-lines"><span class="visual-label">OBSERVE<br>BEFORE<br>CHANGING.</span><span class="visual-symbol">⌘</span><span class="visual-mini">CEPH<br>HEALTH</span></div>
+            <div class="note-meta"><span>STORAGE · OPERATIONS</span><time datetime="2026-09-26">2026.09.26</time></div><h3>Ceph 健康状态排查</h3><p>先用只读命令收集线索，再沿 MON、OSD、PG 与容量逐层定位。</p><span class="note-arrow" aria-hidden="true">↗</span>
+          </a>
+          <a class="note-card" href="./notes/ai-assisted-coding.html">
+            <div class="note-visual visual-package"><span class="package-box">AI<span>↗</span></span><span class="package-caption">PROMPT.<br>REVIEW.<br>VERIFY.</span><span class="package-track"></span></div>
+            <div class="note-meta"><span>AI · VIBE CODING</span><time datetime="2026-09-26">2026.09.26</time></div><h3>AI 辅助开发的协作闭环</h3><p>Codex、WorkBuddy、Resonix 配合需求拆解、差异审查与测试验证。</p><span class="note-arrow" aria-hidden="true">↗</span>
+          </a>
           <a class="note-card note-main" href="./2023/02/07/配置http协议文件服务器/">
             <div class="note-visual visual-terminal"><span class="terminal-dots"><i></i><i></i><i></i></span><span class="terminal-path">~/lab/server</span><pre><b>$</b> python -m http.server 8000<br><em>Serving HTTP</em> on 0.0.0.0<br><span>Share a file. Keep it simple.</span></pre><span class="visual-stamp">LINUX<br>FIELD NOTE</span></div>
             <div class="note-meta"><span>LINUX · SERVER</span><time datetime="2023-02-07">2023.02.07</time></div><h3>配置 HTTP 协议文件服务器</h3><p>用最轻量的方式，在局域网里快速搭建文件共享服务。</p><span class="note-arrow" aria-hidden="true">↗</span>
@@ -93,7 +110,7 @@
             <div class="note-meta"><span>PYTHON · PACKAGING</span><time datetime="2022-08-23">2022.08.23</time></div><h3>发布自己的 Python 库</h3><p>从本地代码到一个可分享、可安装的小工具。</p><span class="note-arrow" aria-hidden="true">↗</span>
           </a>
         </div>
-        <p class="archive-footnote">每篇文章，都是当时解决一个小问题的记录。 <a href="./archives/">去档案室看看 →</a></p>
+        <p class="archive-footnote">新增专题整理于 2026-09-26；早期文章保留原始发布日期。 <a href="./notes/">浏览专题索引 →</a> · <a href="./archives/">查看原始归档 →</a></p>
       </div>
     </section>
 

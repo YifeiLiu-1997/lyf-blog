@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="学习笔记：用 cephadm 规划可复现 Ceph 实验环境的准备、bootstrap、主机接入与磁盘检查。">
+  <title>cephadm 实验集群路线 · 刘一非</title>
+  <link rel="icon" href="../img/yifei-portrait.jpg" type="image/jpeg">
+  <link rel="stylesheet" href="../css/notes.css">
+</head>
+<body>
+  <div class="notes-wrap"><nav class="notes-nav" aria-label="主导航"><a class="notes-brand" href="../"><img src="../img/yifei-portrait.jpg" alt="">刘一非 · 工程手记</a><div class="notes-links"><a href="./">专题索引</a><a href="../">博客首页</a><a href="https://yifeiliu-1997.github.io/lyf-profile/">简历 ↗</a></div></nav></div>
+  <main class="article">
+    <header class="article-heading"><p class="article-kicker">STORAGE · LAB ROADMAP / 学习整理</p><h1>用 cephadm 规划一套可复现的实验集群</h1><p class="article-deck">先把环境和设备核对清楚，再 bootstrap、加主机、显式选择 OSD 设备，最后验证集群状态。实验步骤不是生产部署承诺。</p><div class="article-meta"><time datetime="2026-09-26">整理于 2026-09-26</time><span>约 7 分钟</span><span>仅作实验规划</span></div></header>
+    <article class="article-content">
+      <p>Cephadm 通过容器化守护进程和编排器管理集群服务。阅读部署说明时，我会把命令分成两类：查看状态的检查命令，以及会安装服务或占用设备的变更命令。后者必须确认目标主机、网络和磁盘，不能为了“快速跑起来”而直接复制执行。</p>
+      <h2>一、准备一个可复现的实验环境</h2>
+      <p>学习环境可以从三台虚拟机开始，分别规划主机名、管理地址和数据盘。三台只是方便观察副本与节点故障的实验规模，不等于经过设计的高可用生产集群。记录发行版及版本、Ceph release、CPU / 内存、磁盘类型和网络拓扑，后续结果才容易复现。</p>
+      <ul><li>主机名和正反向解析稳定，节点时钟同步；准备清楚管理网与集群流量走哪张网卡。</li><li>确认防火墙策略、SSH 访问、容器运行环境和各节点软件源符合当前 Ceph release 的官方要求。</li><li>实验 OSD 盘应与系统盘区分；逐台确认设备名称、容量、挂载状态和其中是否有必须保留的数据。</li><li>部署前保存环境清单和虚拟机快照，记录每一步的命令、输出及失败原因。</li></ul>
+      <h2>二、bootstrap 只启动起点</h2>
+      <p>在首个管理节点上按官方指南准备 cephadm 与 bootstrap 参数。下面仅展示命令形态；占位符必须替换为实验网络中的实际地址，不能复制此示例直接执行。</p>
+      <pre><code>cephadm bootstrap --mon-ip &lt;MON_IP&gt;</code></pre>
+      <p>Bootstrap 会初始化集群控制组件并生成管理访问材料。先按向导保管配置和 keyring，再通过编排器检查服务状态；不要把密钥贴进公开 issue、博客或代码仓库。</p>
+      <h2>三、逐台接入主机，显式检查设备</h2>
+      <p>先将其余节点加入编排器，核对主机列表和设备发现结果。示例中的主机名与地址都需要按真实实验环境替换：</p>
+      <pre><code>ceph orch host add &lt;HOST_2&gt; &lt;HOST_2_IP&gt;
+ceph orch host ls
+ceph orch device ls</code></pre>
+      <p>只有确认一块设备确实属于实验数据盘、没有需要保留的内容后，才考虑显式把它交给 OSD 服务。设备初始化会改变盘上数据；不了解目标设备时不要执行设备添加命令，也不要为了省事启用“所有可用盘自动部署”。</p>
+      <h2>四、验证服务与故障行为</h2>
+      <p>部署过程结束不代表实验结束。先检查整体健康、守护进程分布和 OSD 树，再观察副本状态、恢复过程与仪表盘。可依次查看 <code>ceph -s</code>、<code>ceph orch ps</code>、<code>ceph osd tree</code>，并记录健康状态从初始部署到节点维护期间的变化。</p>
+      <p>在隔离的实验环境里，可以设计可逆的节点维护练习，学习一个 OSD 暂停服务后 PG 如何变化、服务恢复后如何恢复冗余。任何故障注入都应先确认环境与数据可丢弃，并预先写好恢复步骤。</p>
+      <div class="callout">边界提醒：单机演示适合熟悉命令，不验证故障域隔离；小规模虚拟机实验也不能推导出生产容量、性能或 SLA。真实部署应按选定 release 的官方支持矩阵、网络、容量和恢复目标重新设计。</div>
+      <h2>官方参考</h2>
+      <ul class="source-list"><li><a href="https://docs.ceph.com/en/latest/cephadm/install/" target="_blank" rel="noopener noreferrer">Ceph 官方文档：Using Cephadm to Deploy a New Ceph Cluster</a></li><li><a href="https://docs.ceph.com/en/latest/cephadm/" target="_blank" rel="noopener noreferrer">Ceph 官方文档：Cephadm Guide</a></li></ul>
+    </article>
+    <aside class="article-end"><img src="../img/yifei-portrait.jpg" alt=""><p><a href="../about/">刘一非</a> · 软件平台与工具链研发。本文为实验路线整理，不声称已完成 Ceph 生产集群部署。</p></aside>
+    <footer class="article-footer"><a href="./ceph-architecture.html">← 上一篇：Ceph 架构</a><a href="./ceph-troubleshooting.html">下一篇：健康状态排查 →</a></footer>
+  </main>
+  <footer class="notes-wrap notes-footer">© 2026 LIU YIFEI · SOURCE LINKS AT ARTICLE END</footer>
+</body>
+</html>

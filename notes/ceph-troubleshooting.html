@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Ceph 健康状态学习笔记：使用只读命令收集线索，按 MON、OSD、PG、容量分层排查。">
+  <title>Ceph HEALTH_WARN 排查 · 刘一非</title>
+  <link rel="icon" href="../img/yifei-portrait.jpg" type="image/jpeg">
+  <link rel="stylesheet" href="../css/notes.css">
+</head>
+<body>
+  <div class="notes-wrap"><nav class="notes-nav" aria-label="主导航"><a class="notes-brand" href="../"><img src="../img/yifei-portrait.jpg" alt="">刘一非 · 工程手记</a><div class="notes-links"><a href="./">专题索引</a><a href="../">博客首页</a><a href="https://yifeiliu-1997.github.io/lyf-profile/">简历 ↗</a></div></nav></div>
+  <main class="article">
+    <header class="article-heading"><p class="article-kicker">STORAGE · OPERATIONS / 学习整理</p><h1>Ceph HEALTH_WARN：先观察，再定位</h1><p class="article-deck">健康告警是排查入口，不是诊断结论。建立只读证据链，区分集群映射、OSD、PG 和容量问题，再决定是否需要变更。</p><div class="article-meta"><time datetime="2026-09-26">整理于 2026-09-26</time><span>约 6 分钟</span><span>命令仅用于只读检查</span></div></header>
+    <article class="article-content">
+      <p>遇到 <code>HEALTH_WARN</code> 时，第一反应不应该是清告警或重启全部服务，而是先回答：影响范围是什么、从什么时候开始、哪些服务参与了状态变化、最近是否有扩容或维护操作？同一个告警状态可能由完全不同的原因触发。</p>
+      <h2>先收集一组只读快照</h2>
+      <p>以下命令用于查看当前状态。执行前仍要确认连接的是目标集群，避免把生产和实验环境混淆。</p>
+      <pre><code>ceph -s
+ceph health detail
+ceph osd tree
+ceph pg stat
+ceph df
+ceph orch ps</code></pre>
+      <p>把输出与时间、集群版本、最近变更一起保存。若问题正在变化，可以间隔一段时间重新采集同一组信息，比较变化趋势，不要只凭一个瞬时状态推断根因。</p>
+      <h2>按故障域逐层缩小范围</h2>
+      <h3>1. MON 与集群映射</h3>
+      <p>先看 Monitor quorum 是否稳定、集群时钟是否正常、节点间连接是否可达。控制面不稳定时，后续看到的服务状态可能不完整；此时应优先确认网络、时间和 Monitor 服务，而不是直接操作 OSD。</p>
+      <h3>2. OSD 与主机</h3>
+      <p>通过 OSD 树确认哪些守护进程是 <code>down</code> 或 <code>out</code>，再把它们对应到主机、设备和近期日志。一个主机故障会同时影响该主机上的多个 OSD；如果故障域配置不合理，影响面可能超过直觉预期。</p>
+      <h3>3. PG 状态与恢复</h3>
+      <p>查看 PG 是否 degraded、undersized、stale 或处于恢复队列。恢复通常需要时间和资源，应该结合 OSD 可用性、容量与业务负载观察。不要把“等待恢复完成”误认为某个命令可以安全地强制清除。</p>
+      <h3>4. 容量和空间水位</h3>
+      <p>结合 pool / OSD 使用率、full ratio 告警和新增数据速度判断是否接近容量边界。空间告警既可能需要扩容，也可能来自数据分布倾斜或恢复暂时占用；先读清具体 health detail，再制定容量方案。</p>
+      <h2>把“证据—原因—动作”写下来</h2>
+      <ol><li>记录原始告警与命令输出，不要先清理现场。</li><li>将告警映射到 MON、主机 / OSD、PG、容量或客户端链路。</li><li>核对最近的发布、网络、磁盘或配置变更，并用日志验证假设。</li><li>提出最小范围、可回滚的处置计划；明确数据风险、维护窗口和负责人。</li><li>变更后重新采集相同状态，确认健康和数据冗余恢复，再记录复盘结论。</li></ol>
+      <div class="callout">避免把 <code>ceph osd out</code>、删除 OSD、修改 CRUSH 或切换集群 flag 当成通用修复步骤。这些都是有状态变更，必须先理解具体故障、影响范围和恢复方案，并按所用 Ceph release 的官方操作指南执行。</div>
+      <h2>官方参考</h2>
+      <ul class="source-list"><li><a href="https://docs.ceph.com/en/latest/rados/operations/monitoring/" target="_blank" rel="noopener noreferrer">Ceph 官方文档：Monitoring a Cluster</a></li><li><a href="https://docs.ceph.com/en/latest/rados/operations/health-checks/" target="_blank" rel="noopener noreferrer">Ceph 官方文档：Health Checks</a></li><li><a href="https://docs.ceph.com/en/latest/cephadm/operations/" target="_blank" rel="noopener noreferrer">Ceph 官方文档：Cephadm Operations</a></li></ul>
+    </article>
+    <aside class="article-end"><img src="../img/yifei-portrait.jpg" alt=""><p><a href="../about/">刘一非</a> · 软件平台与工具链研发。本文整理的是一套排查思路，不替代具体版本手册或线上变更审批。</p></aside>
+    <footer class="article-footer"><a href="./cephadm-lab.html">← 上一篇：cephadm 实验路线</a><a href="./ai-assisted-coding.html">下一篇：AI 辅助开发 →</a></footer>
+  </main>
+  <footer class="notes-wrap notes-footer">© 2026 LIU YIFEI · SOURCE LINKS AT ARTICLE END</footer>
+</body>
+</html>
