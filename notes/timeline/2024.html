@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="2024 年技术时间线：虚拟机 Agent、RabbitMQ 消息链路、统一看板与软件测试工具平台。">
+  <title>2024 · 技术时间线 · 刘一非</title>
+  <link rel="icon" href="../../img/favicon_head.png">
+  <link rel="stylesheet" href="../../css/notes.css">
+</head>
+<body>
+  <div class="notes-wrap"><nav class="notes-nav" aria-label="主导航"><a class="notes-brand" href="../../"><span class="notes-brand-mark"><img src="../../img/yifei-portrait.jpg" alt=""></span>刘一非 · 工程手记</a><div class="notes-links"><a href="../">专题索引</a><a href="../../">博客首页</a><a href="https://yifeiliu-1997.github.io/lyf-profile/">个人简历 ↗</a></div></nav></div>
+  <main class="article timeline-page">
+    <header class="article-heading"><p class="article-kicker">PROJECT & LEARNING TIMELINE · 2024</p><h1>让 Agent、消息<br>与工具协同起来。</h1><p class="article-deck">这一年参与云平台虚拟机 Agent 与统一看板，以及多合一软件测试工具平台建设，开始同时处理后台服务、异步消息和工具整合问题。</p><div class="article-meta"><span>5 篇技术记录</span><span>TWISTED · RABBITMQ · FLASK · FLET · SQLITE</span></div></header>
+    <article class="article-content timeline-content">
+      <section class="timeline-entry" id="agent-lifecycle"><p class="timeline-period">项目周期 · 2024.01–至今</p><h2>Agent 服务先定义生命周期和失败边界</h2><p>虚拟机 Agent 不只是一个常驻进程，还要处理启动、连接、周期任务、状态变化和退出等阶段。把每个阶段的职责和状态表达清楚，服务出现异常时才容易判断是尚未启动、暂时失联还是任务执行失败。</p><p>基于 Twisted 的异步结构，设计时要留意阻塞调用对事件循环的影响。把耗时工作与网络事件处理分开考虑，并为超时和连接中断保留明确处理路径，能让 Agent 的行为更容易观察和维护。</p><p>参考：<a href="https://docs.twisted.org/en/stable/core/howto/reactor-basics.html" target="_blank" rel="noopener noreferrer">Twisted Reactor 基础</a></p></section>
+      <section class="timeline-entry" id="rabbitmq"><p class="timeline-period">项目周期 · 2024.01–至今</p><h2>RabbitMQ 链路要把消息状态讲清楚</h2><p>异步消息把生产者和消费者解耦了，但也增加了消息何时算成功、失败如何重试、重复投递如何处理等问题。设计消息流程时，应明确生产、路由、消费和确认各阶段的责任，不能把“队列里有消息”直接等同于“业务已完成”。</p><p>围绕虚拟机 Agent 与看板的数据链路，排查时可以从消息是否发出、是否路由到目标、消费者是否接收和处理结果是否持久化逐段确认。重试、确认和幂等策略应与业务语义一起设计，并通过可观察的日志或状态辅助定位。</p><p>参考：<a href="https://www.rabbitmq.com/docs/reliability" target="_blank" rel="noopener noreferrer">RabbitMQ Reliability Guide</a></p></section>
+      <section class="timeline-entry" id="dashboard-data"><p class="timeline-period">项目周期 · 2024.01–至今</p><h2>统一看板的数据路径，要能从展示回溯到来源</h2><p>Flask 服务、pandas 数据处理与 MySQL 存储连接起来后，问题可能出现在采集、转换、查询或展示任一环节。把数据在各阶段的结构、时间和状态保留下来，能更快区分“数据没有到达”与“页面没有正确呈现”。</p><p>看板接口应提供稳定、清楚的数据含义，避免前端依赖临时字段或隐式格式。对批量处理结果，也需要保留异常信息并区分空结果与处理失败，让使用者知道下一步该查哪里。</p></section>
+      <section class="timeline-entry" id="tool-adapters"><p class="timeline-period">项目周期 · 2024.05–至今</p><h2>多合一测试平台，先统一工具接入的边界</h2><p>不同测试工具往往有各自的启动方式、参数和结果格式。使用适配层约定输入、执行状态和输出结构，可以把工具差异控制在边界内，让平台主流程不必为每一种工具重复编写一套逻辑。</p><p>解析结果时保留原始文件或关键上下文，便于定位格式变化造成的问题。对无法识别的结果应给出明确状态，而不是默默丢弃；新增工具时也应验证旧工具流程不受影响。</p></section>
+      <section class="timeline-entry" id="flet-sqlite"><p class="timeline-period">项目周期 · 2024.05–至今</p><h2>Flet 与 SQLite 组合，轻量不代表边界可以模糊</h2><p>基于 Flet、SQLite、脚本和插件解析机制推进工具平台时，界面操作、任务执行、本地数据和文件产物之间需要有清楚的分工。将耗时工作与界面交互分开，可减少操作卡顿；将任务状态显式化，则更方便用户理解当前进度。</p><p>SQLite 适合轻量本地数据管理，但数据升级、备份路径和并发写入仍需要提前考虑。把数据库结构变化和工具版本一起管理，比让用户目录里的数据格式悄悄漂移更稳妥。</p></section>
+      <div class="callout">系统协作的核心不是堆更多组件，而是明确状态归属、接口契约、失败处理和可观察信息。</div>
+    </article>
+    <nav class="timeline-nav" aria-label="年份导航"><a href="./2023.html">← 2023 时间线</a><a href="./2025.html">2025 时间线 →</a></nav>
+  </main>
+  <footer class="notes-wrap notes-footer">© 2026 LIU YIFEI · PROJECT & LEARNING TIMELINE</footer>
+</body>
+</html>

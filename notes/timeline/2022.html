@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="2022 年技术时间线：Linux、MySQL、Python 工程化与深度学习阅读笔记。">
+  <title>2022 · 技术时间线 · 刘一非</title>
+  <link rel="icon" href="../../img/favicon_head.png">
+  <link rel="stylesheet" href="../../css/notes.css">
+</head>
+<body>
+  <div class="notes-wrap"><nav class="notes-nav" aria-label="主导航"><a class="notes-brand" href="../../"><span class="notes-brand-mark"><img src="../../img/yifei-portrait.jpg" alt=""></span>刘一非 · 工程手记</a><div class="notes-links"><a href="../">专题索引</a><a href="../../">博客首页</a><a href="https://yifeiliu-1997.github.io/lyf-profile/">个人简历 ↗</a></div></nav></div>
+  <main class="article timeline-page">
+    <header class="article-heading"><p class="article-kicker">PROJECT & LEARNING TIMELINE · 2022</p><h1>从基础环境，<br>到可复用的工具。</h1><p class="article-deck">这一年的记录围绕 Linux 环境、数据问题、Python 包管理和算法阅读展开。原始文章链接保留在对应条目中。</p><div class="article-meta"><span>6 篇技术记录</span><span>LINUX · PYTHON · MYSQL · RESEARCH</span></div></header>
+    <article class="article-content timeline-content">
+      <section class="timeline-entry" id="srir"><p class="timeline-period">2022 · 算法阅读</p><h2>读论文先拆问题，再看网络结构</h2><p>做图像超分辨率方向的阅读时，我会先确认任务输入、目标输出和评价方式，再逐步看数据、损失函数与网络结构。这样能把“模型用了什么模块”放回到“它试图解决什么问题”里理解。</p><p>读 SRIR 相关工作时，重点是沿着图像重建的任务链路整理方法差异，而不是只摘录模型名词。对后续做算法实现或撰写技术材料，这种问题—方法—实验的阅读顺序更容易复用。</p><p><a href="../../2022/07/26/paper-srir-overview/">查看原始笔记：超分辨率图像重建算法综述 →</a></p></section>
+      <section class="timeline-entry" id="linux-permissions"><p class="timeline-period">2022 · Linux 与虚拟机</p><h2>共享目录权限，先确认访问身份与挂载边界</h2><p>虚拟机里的共享目录打不开时，不要先把权限一股脑改成可写。先确认当前用户和所属组，再看挂载目录、文件属主及实际访问路径，区分宿主机共享配置与来宾系统文件权限。</p><p>权限问题要在最小范围内修复，并用当前用户重新验证读写结果。把“谁在访问、访问哪个路径、由谁管理权限”记录清楚，比反复执行 chmod 更能避免扩大暴露面。</p><p><a href="../../2022/07/23/2022-07-23/">查看原始笔记：VMware 共享文档 chmod 权限问题 →</a></p></section>
+      <section class="timeline-entry" id="networking"><p class="timeline-period">2022 · Linux 网络</p><h2>网络连接异常，从链路到路由分层检查</h2><p>Ubuntu 网络列表中有线连接不见时，我会把物理链路、系统识别到的网卡、连接配置和 IP / 路由状态分开检查。这样可以先定位问题落在设备识别、网络管理还是地址配置，而不是直接重装或覆盖网络配置。</p><p>每次只改变一个配置项并留下变更前后的状态，有助于判断哪一步真正起作用。这个习惯后来也适用于部署和兼容性排查：先收集证据，再做可回退的改动。</p><p><a href="../../2022/07/29/ubuntu-设置网络中-wired-消失的解决办法/">查看原始笔记：Ubuntu wired 连接问题 →</a></p></section>
+      <section class="timeline-entry" id="mysql"><p class="timeline-period">2022 · 数据库基础</p><h2>MySQL 问题排查，从复现条件和数据状态开始</h2><p>遇到 SQL 或数据结果异常时，先保留最小复现输入，确认表结构、字段类型、空值和查询条件，再看结果是否与预期一致。问题描述得越具体，越容易区分是数据本身、查询逻辑还是运行环境造成的差异。</p><p>排查过程同时记录执行语句与关键输出，避免只留下一个“已经修好”的结论。它也是后续做测试平台时的重要习惯：结果要能追溯到输入和处理步骤。</p><p><a href="../../2022/07/26/mysqlQ1/">查看原始笔记：MySQL 问题记录 →</a></p></section>
+      <section class="timeline-entry" id="linux-processes"><p class="timeline-period">2022 · Linux 运维基础</p><h2>看进程时，把状态、资源和启动来源放在一起</h2><p>观察进程不能只看名称。进程是否存在、由谁启动、运行了多久、占用多少资源，以及它对应哪个服务或命令，都能帮助缩小排查范围。遇到端口占用或服务未响应时，也要把进程信息与端口、日志和配置相互印证。</p><p>配置云主机时，我会按系统准备、依赖安装、服务启动与连通性检查逐项确认。将临时操作写成清单，后续复现和交接会比依赖记忆稳定。</p><p><a href="../../2022/08/09/关于-Linux-的进程/">查看原始笔记：关于 Linux 的进程 →</a> · <a href="../../2022/08/10/阿里云服务器环境配置/">阿里云服务器环境配置 →</a></p></section>
+      <section class="timeline-entry" id="python-packaging"><p class="timeline-period">2022 · Python 工程化</p><h2>把脚本整理成别人能够安装和复用的包</h2><p>发布 Python 库之前，先明确包名、导入路径、依赖和公开接口，再用干净环境验证安装与调用。项目文件能在本机运行，并不代表分发后的包结构、元数据和依赖声明都正确。</p><p>小步构建、安装、导入和发布检查能尽早发现打包路径或版本配置问题。这个过程让我开始把“代码能跑”与“代码可交付、可复用”分开看待。</p><p><a href="../../2022/08/23/发布自己的python库/">查看原始笔记：发布自己的 Python 库 →</a></p></section>
+      <div class="callout">这一年形成的基础习惯：先还原问题和环境，再做小范围验证；记录输入、操作和结果，让结论能够复查。</div>
+    </article>
+    <nav class="timeline-nav" aria-label="年份导航"><a href="../">← 所有年份</a><a href="./2023.html">2023 时间线 →</a></nav>
+  </main>
+  <footer class="notes-wrap notes-footer">© 2026 LIU YIFEI · PROJECT & LEARNING TIMELINE</footer>
+</body>
+</html>

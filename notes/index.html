@@ -11,15 +11,21 @@
 <body>
   <div class="notes-wrap"><nav class="notes-nav" aria-label="主导航"><a class="notes-brand" href="../"><span class="notes-brand-mark"><img src="../img/yifei-portrait.jpg" alt=""></span>刘一非 · 工程手记</a><div class="notes-links"><a href="../">博客首页</a><a href="../archives/">原始归档</a><a href="https://yifeiliu-1997.github.io/lyf-profile/">个人简历 ↗</a></div></nav></div>
   <main class="notes-wrap">
-    <header class="notes-hero"><p class="notes-kicker">TECHNICAL NOTES / 2022 — 2026</p><h1>把原理弄清楚，<br><strong>再动手做。</strong></h1><p>索引收录 2022、2023 年的原始记录，以及 2026 年补充整理的专题。每篇保留原始发布日期或实际整理日期；Ceph 内容是学习整理，不代表生产集群部署经历。</p></header>
-    <section class="notes-section" aria-labelledby="latest-title"><h2 id="latest-title">专题文章 · 2026-09-26</h2><div class="note-list">
-      <a class="note-row" href="./ceph-architecture.html"><time datetime="2026-09-26">2026.09.26 · STORAGE</time><h3>Ceph 架构与数据放置：MON、OSD、PG、CRUSH</h3><p>从 RADOS 对象到副本 OSD，梳理控制面、数据面与故障域放置。</p><span>ARCHITECTURE · READ 6 MIN</span></a>
-      <a class="note-row" href="./cephadm-lab.html"><time datetime="2026-09-26">2026.09.26 · LAB</time><h3>用 cephadm 规划一套可复现的实验集群</h3><p>部署前置检查、bootstrap、主机和磁盘核验，以及实验与生产的边界。</p><span>DEPLOYMENT · READ 7 MIN</span></a>
-      <a class="note-row" href="./ceph-troubleshooting.html"><time datetime="2026-09-26">2026.09.26 · OPERATIONS</time><h3>Ceph HEALTH_WARN：先观察，再定位</h3><p>以只读状态命令建立证据链，按 MON、OSD、PG、容量逐层排查。</p><span>TROUBLESHOOTING · READ 6 MIN</span></a>
-      <a class="note-row" href="./ai-assisted-coding.html"><time datetime="2026-09-26">2026.09.26 · AI DEVELOPMENT</time><h3>Vibe Coding 不等于跳过工程：AI 辅助开发闭环</h3><p>用明确范围、小步实现、差异审查和测试，把生成速度接回交付质量。</p><span>CODEX · WORKBUDDY · RESONIX</span></a>
-    </div>
-    <p class="date-integrity">新增专题的整理日期均为 2026-09-26。没有把新写的内容回填成 2023–2025 年旧文；已有文章继续沿用原页面日期。</p></section>
-    <section class="archive-section" aria-labelledby="archive-title"><h2 id="archive-title">之前的学习记录</h2><p>原始文章按页面所记日期列出，完整月份与分类可在旧归档中查看。</p><div class="archive-list">
+    <header class="notes-hero"><p class="notes-kicker">TECHNICAL NOTES / 2022 — 2026</p><h1>把原理弄清楚，<br><strong>再动手做。</strong></h1><p>沿着真实项目与技术栈记录五年实践：从 Linux、Python 和算法阅读，到平台研发、虚拟机 Agent、本地智能检索与 AI 协作。Ceph 专题聚焦架构学习和实验规划。</p></header>
+    <section class="timeline-index" aria-labelledby="timeline-title"><div class="timeline-index-heading"><div><p class="notes-kicker">PROJECT & LEARNING TIMELINE</p><h2 id="timeline-title">2022 — 2026 技术时间线</h2></div><p>按项目周期与年度学习主题浏览</p></div><div class="year-grid">
+      <a class="year-card" href="./timeline/2022.html"><span class="year-card-number">2022</span><strong>Linux · Python · 算法阅读</strong><span>6 篇技术记录 ↗</span></a>
+      <a class="year-card" href="./timeline/2023.html"><span class="year-card-number">2023</span><strong>Django · React · 兼容性平台</strong><span>5 篇技术记录 ↗</span></a>
+      <a class="year-card" href="./timeline/2024.html"><span class="year-card-number">2024</span><strong>Agent · 消息链路 · 测试工具</strong><span>5 篇技术记录 ↗</span></a>
+      <a class="year-card" href="./timeline/2025.html"><span class="year-card-number">2025</span><strong>本地检索 · ONNX · FAISS</strong><span>5 篇技术记录 ↗</span></a>
+      <a class="year-card" href="./timeline/2026.html"><span class="year-card-number">2026</span><strong>Ceph · AI 辅助研发</strong><span>5 篇技术记录 ↗</span></a>
+    </div></section>
+    <section class="notes-section" aria-labelledby="latest-title"><h2 id="latest-title">专题文章 · 2026</h2><div class="note-list">
+      <a class="note-row" href="./ceph-architecture.html"><time datetime="2026">2026 · STORAGE</time><h3>Ceph 架构与数据放置：MON、OSD、PG、CRUSH</h3><p>从 RADOS 对象到副本 OSD，梳理控制面、数据面与故障域放置。</p><span>ARCHITECTURE · READ 6 MIN</span></a>
+      <a class="note-row" href="./cephadm-lab.html"><time datetime="2026">2026 · LAB</time><h3>用 cephadm 规划一套可复现的实验集群</h3><p>部署前置检查、bootstrap、主机和磁盘核验，以及实验与生产的边界。</p><span>DEPLOYMENT · READ 7 MIN</span></a>
+      <a class="note-row" href="./ceph-troubleshooting.html"><time datetime="2026">2026 · OPERATIONS</time><h3>Ceph HEALTH_WARN：先观察，再定位</h3><p>以只读状态命令建立证据链，按 MON、OSD、PG、容量逐层排查。</p><span>TROUBLESHOOTING · READ 6 MIN</span></a>
+      <a class="note-row" href="./ai-assisted-coding.html"><time datetime="2026">2026 · AI DEVELOPMENT</time><h3>Vibe Coding 不等于跳过工程：AI 辅助开发闭环</h3><p>用明确范围、小步实现、差异审查和测试，把生成速度接回交付质量。</p><span>CODEX · WORKBUDDY · RESONIX</span></a>
+    </div></section>
+    <section class="archive-section" aria-labelledby="archive-title"><h2 id="archive-title">原始学习记录</h2><p>早期文章保留原页面日期，完整月份与分类可在旧归档中查看。</p><div class="archive-list">
       <a href="../2023/02/07/配置http协议文件服务器/"><time datetime="2023-02-07">2023.02.07</time><span>配置 HTTP 协议文件服务器</span></a>
       <a href="../2023/02/02/Linux-服务器配置/"><time datetime="2023-02-02">2023.02.02</time><span>Linux 常用指令</span></a>
       <a href="../2022/10/26/深度学习的几个方向/"><time datetime="2022-10-26">2022.10.26</time><span>人工智能研究方向</span></a>
@@ -34,7 +40,7 @@
       <a href="../archives/"><time>ARCHIVE</time><span>浏览完整原始归档 →</span></a>
     </div></section>
   </main>
-  <footer class="notes-wrap notes-footer">© <span data-year></span> LIU YIFEI · NOTES WITH SOURCES AND REAL DATES</footer>
+  <footer class="notes-wrap notes-footer">© <span data-year></span> LIU YIFEI · PROJECT & LEARNING TIMELINE</footer>
   <script>document.querySelector('[data-year]').textContent = new Date().getFullYear();</script>
 </body>
 </html>

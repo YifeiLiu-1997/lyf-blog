@@ -11,7 +11,7 @@
 <body>
   <div class="notes-wrap"><nav class="notes-nav" aria-label="主导航"><a class="notes-brand" href="../"><span class="notes-brand-mark"><img src="../img/yifei-portrait.jpg" alt=""></span>刘一非 · 工程手记</a><div class="notes-links"><a href="./">专题索引</a><a href="../">博客首页</a><a href="https://yifeiliu-1997.github.io/lyf-profile/">简历 ↗</a></div></nav></div>
   <main class="article">
-    <header class="article-heading"><p class="article-kicker">STORAGE · ARCHITECTURE / 学习整理</p><h1>Ceph 架构与数据放置：MON、OSD、PG、CRUSH</h1><p class="article-deck">把 Ceph 看成一套由集群状态、对象映射和存储守护进程协作的分布式系统：先弄清楚“数据在哪里”，再讨论“怎么扩容和恢复”。</p><div class="article-meta"><time datetime="2026-09-26">整理于 2026-09-26</time><span>约 6 分钟</span><span>概念笔记，不是生产部署记录</span></div></header>
+    <header class="article-heading"><p class="article-kicker">STORAGE · ARCHITECTURE / 2026</p><h1>Ceph 架构与数据放置：MON、OSD、PG、CRUSH</h1><p class="article-deck">把 Ceph 看成一套由集群状态、对象映射和存储守护进程协作的分布式系统：先弄清楚“数据在哪里”，再讨论“怎么扩容和恢复”。</p><div class="article-meta"><time datetime="2026">2026</time><span>约 6 分钟</span><span>架构学习笔记</span></div></header>
     <article class="article-content">
       <p>这篇笔记从 Ceph 的 RADOS 层出发，串起几个常见名词。最有用的心智模型是：客户端借助集群映射计算对象的放置位置，再与负责该位置的 OSD 通信；Monitor 维护映射与集群状态，并不是所有读写都经过它转发。</p>
       <h2>先分清守护进程各自做什么</h2>

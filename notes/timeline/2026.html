@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="2026 年技术时间线：Ceph 架构学习、cephadm 实验规划、集群状态排查与 AI 辅助研发实践。">
+  <title>2026 · 技术时间线 · 刘一非</title>
+  <link rel="icon" href="../../img/favicon_head.png">
+  <link rel="stylesheet" href="../../css/notes.css">
+</head>
+<body>
+  <div class="notes-wrap"><nav class="notes-nav" aria-label="主导航"><a class="notes-brand" href="../../"><span class="notes-brand-mark"><img src="../../img/yifei-portrait.jpg" alt=""></span>刘一非 · 工程手记</a><div class="notes-links"><a href="../">专题索引</a><a href="../../">博客首页</a><a href="https://yifeiliu-1997.github.io/lyf-profile/">个人简历 ↗</a></div></nav></div>
+  <main class="article timeline-page">
+    <header class="article-heading"><p class="article-kicker">PROJECT & LEARNING TIMELINE · 2026</p><h1>继续补齐分布式存储，<br>也升级研发方式。</h1><p class="article-deck">沿着 Ceph 官方资料梳理存储架构和运维思路，同时把 Codex、WorkBuddy、Resonix 放进有边界、可审查、可验证的研发协作流程。</p><div class="article-meta"><span>5 篇技术记录</span><span>CEPH · AI DEVELOPMENT · ENGINEERING</span></div></header>
+    <article class="article-content timeline-content">
+      <section class="timeline-entry" id="ceph-architecture"><p class="timeline-period">2026 · 分布式存储</p><h2>Ceph 架构与数据放置：先建立整体心智模型</h2><p>学习 Ceph 时，我先把 RADOS、Monitor、OSD、PG 和 CRUSH 放进一条数据路径里理解：集群状态如何形成映射，对象如何映射到放置组，放置规则如何把数据分配到设备与故障域。这样能避免把每个名词孤立记忆。</p><p>理解架构后，再分别看读写路径、扩缩容和恢复行为，会更容易判断某项集群状态意味着什么。这是基于文档的学习笔记，不等同于生产集群交付经历。</p><p><a href="../ceph-architecture.html">阅读专题：Ceph 架构与数据放置 →</a> · <a href="https://docs.ceph.com/en/latest/architecture/" target="_blank" rel="noopener noreferrer">Ceph Architecture 官方文档</a></p></section>
+      <section class="timeline-entry" id="cephadm"><p class="timeline-period">2026 · 集群部署学习</p><h2>用 cephadm 规划实验环境，先验证主机与设备前提</h2><p>读部署文档时，我把实验准备拆成主机连通、时间与网络、容器运行环境、设备清单和初始化步骤。按顺序确认前置条件，可以把环境问题与 Ceph 服务本身的问题分开。</p><p>规划存储实验还要提前想清楚设备归属、故障域和清理方式。文档步骤是实验方案，不应被写成已运行生产集群；这篇笔记重点是如何把部署过程设计成可复现、可检查的练习。</p><p><a href="../cephadm-lab.html">阅读专题：用 cephadm 规划实验集群 →</a> · <a href="https://docs.ceph.com/en/latest/cephadm/install/" target="_blank" rel="noopener noreferrer">Cephadm 官方安装文档</a></p></section>
+      <section class="timeline-entry" id="ceph-health"><p class="timeline-period">2026 · 运维排查</p><h2>遇到 HEALTH_WARN，先读状态，再决定是否干预</h2><p>集群告警首先是线索，不是直接执行修复命令的理由。先查看健康摘要与详细检查项，再关联 Monitor 仲裁状态、OSD 在线情况、PG 状态和容量信息，逐层确定影响范围。</p><p>每次操作前记录当前状态；若要改变配置或重启服务，应明确预期影响与回退方式。把观测和干预分开，既降低误操作风险，也让问题处理过程能向团队解释。</p><p><a href="../ceph-troubleshooting.html">阅读专题：Ceph HEALTH_WARN 排查 →</a> · <a href="https://docs.ceph.com/en/latest/rados/operations/health-checks/" target="_blank" rel="noopener noreferrer">Ceph Health Checks 官方文档</a></p></section>
+      <section class="timeline-entry" id="ceph-data-services"><p class="timeline-period">2026 · 存储服务模型</p><h2>RBD、CephFS 与对象网关，先按访问方式区分</h2><p>比较分布式存储服务时，先看应用需要的是块设备、共享文件系统还是对象接口，再理解各自的数据访问模型和客户端方式。底层都由 Ceph 提供存储能力，并不意味着上层接口可以互换。</p><p>做方案设计时，还要把应用兼容性、故障域、数据保护和运维能力放在一起评估。先用清晰的访问需求筛选服务类型，再深入对应的设计与运维文档，比从某个产品名开始推方案更有效。</p><p>参考：<a href="https://docs.ceph.com/en/latest/rbd/" target="_blank" rel="noopener noreferrer">RBD</a> · <a href="https://docs.ceph.com/en/latest/cephfs/" target="_blank" rel="noopener noreferrer">CephFS</a> · <a href="https://docs.ceph.com/en/latest/radosgw/" target="_blank" rel="noopener noreferrer">RADOS Gateway</a></p></section>
+      <section class="timeline-entry" id="ai-workflow"><p class="timeline-period">2026 · AI 辅助研发</p><h2>Vibe Coding 不跳过工程步骤：把生成接回交付闭环</h2><p>我会根据任务在 Codex、WorkBuddy、Resonix 等工具之间切换，但核心做法相同：先讲清目标、相关上下文、不能改动的边界和验收方式，再拆成可检查的小步。涉及关键路径时先读现有实现，避免只按表面描述重写。</p><p>生成代码后审查差异、执行针对性测试并检查失败路径；涉及密钥、用户数据或内部代码时，遵守工具与项目的数据边界。工具可以加快探索和实现，设计判断、合并和最终验证仍由开发者负责。</p><p><a href="../ai-assisted-coding.html">阅读专题：AI 辅助开发的协作闭环 →</a> · <a href="https://developers.openai.com/codex" target="_blank" rel="noopener noreferrer">Codex 官方文档</a></p></section>
+      <div class="callout">本年关注点：把新知识映射到可验证的系统路径，也让 AI 协作保留工程边界与人工审阅。</div>
+    </article>
+    <nav class="timeline-nav" aria-label="年份导航"><a href="./2025.html">← 2025 时间线</a><a href="../">回到时间线索引 →</a></nav>
+  </main>
+  <footer class="notes-wrap notes-footer">© 2026 LIU YIFEI · PROJECT & LEARNING TIMELINE</footer>
+</body>
+</html>

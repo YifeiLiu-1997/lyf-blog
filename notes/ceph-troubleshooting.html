@@ -11,7 +11,7 @@
 <body>
   <div class="notes-wrap"><nav class="notes-nav" aria-label="主导航"><a class="notes-brand" href="../"><span class="notes-brand-mark"><img src="../img/yifei-portrait.jpg" alt=""></span>刘一非 · 工程手记</a><div class="notes-links"><a href="./">专题索引</a><a href="../">博客首页</a><a href="https://yifeiliu-1997.github.io/lyf-profile/">简历 ↗</a></div></nav></div>
   <main class="article">
-    <header class="article-heading"><p class="article-kicker">STORAGE · OPERATIONS / 学习整理</p><h1>Ceph HEALTH_WARN：先观察，再定位</h1><p class="article-deck">健康告警是排查入口，不是诊断结论。建立只读证据链，区分集群映射、OSD、PG 和容量问题，再决定是否需要变更。</p><div class="article-meta"><time datetime="2026-09-26">整理于 2026-09-26</time><span>约 6 分钟</span><span>命令仅用于只读检查</span></div></header>
+    <header class="article-heading"><p class="article-kicker">STORAGE · OPERATIONS / 2026</p><h1>Ceph HEALTH_WARN：先观察，再定位</h1><p class="article-deck">健康告警是排查入口，不是诊断结论。建立只读证据链，区分集群映射、OSD、PG 和容量问题，再决定是否需要变更。</p><div class="article-meta"><time datetime="2026">2026</time><span>约 6 分钟</span><span>状态检查与定位</span></div></header>
     <article class="article-content">
       <p>遇到 <code>HEALTH_WARN</code> 时，第一反应不应该是清告警或重启全部服务，而是先回答：影响范围是什么、从什么时候开始、哪些服务参与了状态变化、最近是否有扩容或维护操作？同一个告警状态可能由完全不同的原因触发。</p>
       <h2>先收集一组只读快照</h2>

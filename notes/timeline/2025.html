@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="2025 年技术时间线：OnScope 本地智能文件检索、语义搜索、ONNX、FAISS 与 Windows 兼容适配。">
+  <title>2025 · 技术时间线 · 刘一非</title>
+  <link rel="icon" href="../../img/favicon_head.png">
+  <link rel="stylesheet" href="../../css/notes.css">
+</head>
+<body>
+  <div class="notes-wrap"><nav class="notes-nav" aria-label="主导航"><a class="notes-brand" href="../../"><span class="notes-brand-mark"><img src="../../img/yifei-portrait.jpg" alt=""></span>刘一非 · 工程手记</a><div class="notes-links"><a href="../">专题索引</a><a href="../../">博客首页</a><a href="https://yifeiliu-1997.github.io/lyf-profile/">个人简历 ↗</a></div></nav></div>
+  <main class="article timeline-page">
+    <header class="article-heading"><p class="article-kicker">PROJECT & LEARNING TIMELINE · 2025</p><h1>把检索能力，<br>带到本地环境。</h1><p class="article-deck">参与 OnScope 本地智能文件检索，涉及文件扫描、语义检索、结果展示、Windows 7 组件适配与低内存优化。</p><div class="article-meta"><span>5 篇技术记录</span><span>QT · ONNX · FAISS · RUST · WINDOWS</span></div></header>
+    <article class="article-content timeline-content">
+      <section class="timeline-entry" id="file-scan"><p class="timeline-period">项目周期 · 2025.01–至今</p><h2>本地文件扫描要兼顾完整性、增量与可恢复</h2><p>扫描目录时，首先明确文件范围、排除规则和可访问路径；随后区分首次建立索引与后续更新。将扫描进度和单文件错误记录下来，可以避免一个损坏或无法读取的文件让整批处理静默中断。</p><p>重新扫描、增量更新和删除文件后的索引清理需要保持一致。对用户而言，结果是否新鲜与内容是否覆盖同样重要，因此要能解释索引建立时间、扫描范围和失败项目。</p></section>
+      <section class="timeline-entry" id="parsing"><p class="timeline-period">项目周期 · 2025.01–至今</p><h2>文件解析用统一接口隔离格式差异</h2><p>不同文档格式的解析能力和失败模式不一样。把“发现文件、提取文本、清洗内容、生成索引记录”分成清楚阶段，可以逐步扩展格式支持，并在单个解析器失败时保留文件级错误，不影响其他文件继续处理。</p><p>解析结果应保留来源路径、标题或页码等定位信息，让检索命中能够回到原始材料。文本为空、编码异常或格式不支持时，也要反馈可理解的状态，而非生成无法解释的空结果。</p></section>
+      <section class="timeline-entry" id="onnx"><p class="timeline-period">项目周期 · 2025.01–至今</p><h2>ONNX 推理集成，模型兼容只是第一步</h2><p>本地推理链路需要同时管理模型文件、运行时版本、输入预处理和输出解码。即使模型能够加载，输入形状、数据类型或算子支持不一致仍可能造成推理错误，因此应把模型与运行环境作为一个可验证的组合。</p><p>离线场景还要考虑首次启动耗时、模型资源占用和失败提示。通过小型固定样例验证从输入到结果的完整链路，再逐步接入真实文件，更容易定位是解析、向量化还是推理阶段的问题。</p><p>参考：<a href="https://onnxruntime.ai/docs/" target="_blank" rel="noopener noreferrer">ONNX Runtime 官方文档</a></p></section>
+      <section class="timeline-entry" id="faiss"><p class="timeline-period">项目周期 · 2025.01–至今</p><h2>向量检索的结果，必须能回到原文和业务语境</h2><p>FAISS 可以承担向量近邻搜索，但索引本身不包含完整的业务上下文。向量条目需要与文件、文本片段和来源位置建立稳定映射，检索时再把相似度结果还原为用户可理解、可打开的内容。</p><p>评估检索效果时，要用真实问题检查命中内容是否相关，而不仅是观察搜索接口有没有返回结果。分块策略、向量模型与索引更新都会影响命中质量，调整时应保持测试样例一致，比较变化而不是凭感觉判断。</p><p>参考：<a href="https://github.com/facebookresearch/faiss" target="_blank" rel="noopener noreferrer">FAISS 项目文档</a></p></section>
+      <section class="timeline-entry" id="windows-memory"><p class="timeline-period">项目周期 · 2025.01–至今</p><h2>Windows 7 适配与低内存优化，从运行约束反推方案</h2><p>旧系统兼容不仅是安装包能否启动，还涉及可用运行库、系统 API、驱动或推理后端等依赖边界。逐个核对组件的最低系统要求，再在目标环境验证关键路径，比在开发机上通过就假设全部兼容更可靠。</p><p>低内存场景下，要关注模型加载、文本缓存、向量索引和界面资源的总占用。按需加载、限制批次和及时释放临时数据是常见思路，但需要以实际目标环境的启动与检索流程验证，不用没有测量依据的数字替代测试结果。</p></section>
+      <div class="callout">本地智能检索的工程难点横跨文件、模型、索引和目标系统；稳定的来源映射与逐层验证贯穿整条链路。</div>
+    </article>
+    <nav class="timeline-nav" aria-label="年份导航"><a href="./2024.html">← 2024 时间线</a><a href="./2026.html">2026 时间线 →</a></nav>
+  </main>
+  <footer class="notes-wrap notes-footer">© 2026 LIU YIFEI · PROJECT & LEARNING TIMELINE</footer>
+</body>
+</html>

@@ -11,7 +11,7 @@
 <body>
   <div class="notes-wrap"><nav class="notes-nav" aria-label="主导航"><a class="notes-brand" href="../"><span class="notes-brand-mark"><img src="../img/yifei-portrait.jpg" alt=""></span>刘一非 · 工程手记</a><div class="notes-links"><a href="./">专题索引</a><a href="../">博客首页</a><a href="https://yifeiliu-1997.github.io/lyf-profile/">简历 ↗</a></div></nav></div>
   <main class="article">
-    <header class="article-heading"><p class="article-kicker">STORAGE · LAB ROADMAP / 学习整理</p><h1>用 cephadm 规划一套可复现的实验集群</h1><p class="article-deck">先把环境和设备核对清楚，再 bootstrap、加主机、显式选择 OSD 设备，最后验证集群状态。实验步骤不是生产部署承诺。</p><div class="article-meta"><time datetime="2026-09-26">整理于 2026-09-26</time><span>约 7 分钟</span><span>仅作实验规划</span></div></header>
+    <header class="article-heading"><p class="article-kicker">STORAGE · LAB ROADMAP / 2026</p><h1>用 cephadm 规划一套可复现的实验集群</h1><p class="article-deck">先把环境和设备核对清楚，再 bootstrap、加主机、显式选择 OSD 设备，最后验证集群状态。实验步骤不是生产部署承诺。</p><div class="article-meta"><time datetime="2026">2026</time><span>约 7 分钟</span><span>实验规划</span></div></header>
     <article class="article-content">
       <p>Cephadm 通过容器化守护进程和编排器管理集群服务。阅读部署说明时，我会把命令分成两类：查看状态的检查命令，以及会安装服务或占用设备的变更命令。后者必须确认目标主机、网络和磁盘，不能为了“快速跑起来”而直接复制执行。</p>
       <h2>一、准备一个可复现的实验环境</h2>
