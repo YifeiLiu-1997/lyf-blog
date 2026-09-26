@@ -5,11 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="学习笔记：从 RADOS、MON、OSD、PG 和 CRUSH 理解 Ceph 的控制面与数据放置。">
   <title>Ceph 架构与数据放置 · 刘一非</title>
-  <link rel="icon" href="../img/yifei-portrait.jpg" type="image/jpeg">
+  <link rel="icon" href="../img/favicon_head.png">
   <link rel="stylesheet" href="../css/notes.css">
 </head>
 <body>
-  <div class="notes-wrap"><nav class="notes-nav" aria-label="主导航"><a class="notes-brand" href="../"><img src="../img/yifei-portrait.jpg" alt="">刘一非 · 工程手记</a><div class="notes-links"><a href="./">专题索引</a><a href="../">博客首页</a><a href="https://yifeiliu-1997.github.io/lyf-profile/">简历 ↗</a></div></nav></div>
+  <div class="notes-wrap"><nav class="notes-nav" aria-label="主导航"><a class="notes-brand" href="../"><span class="notes-brand-mark"><img src="../img/yifei-portrait.jpg" alt=""></span>刘一非 · 工程手记</a><div class="notes-links"><a href="./">专题索引</a><a href="../">博客首页</a><a href="https://yifeiliu-1997.github.io/lyf-profile/">简历 ↗</a></div></nav></div>
   <main class="article">
     <header class="article-heading"><p class="article-kicker">STORAGE · ARCHITECTURE / 学习整理</p><h1>Ceph 架构与数据放置：MON、OSD、PG、CRUSH</h1><p class="article-deck">把 Ceph 看成一套由集群状态、对象映射和存储守护进程协作的分布式系统：先弄清楚“数据在哪里”，再讨论“怎么扩容和恢复”。</p><div class="article-meta"><time datetime="2026-09-26">整理于 2026-09-26</time><span>约 6 分钟</span><span>概念笔记，不是生产部署记录</span></div></header>
     <article class="article-content">
@@ -35,7 +35,7 @@
       <h2>延伸阅读</h2>
       <ul class="source-list"><li><a href="https://docs.ceph.com/en/latest/architecture/" target="_blank" rel="noopener noreferrer">Ceph 官方文档：Architecture</a></li><li><a href="https://docs.ceph.com/en/latest/rados/operations/crush-map/" target="_blank" rel="noopener noreferrer">Ceph 官方文档：CRUSH Maps</a></li><li><a href="https://docs.ceph.com/en/latest/rados/operations/" target="_blank" rel="noopener noreferrer">Ceph 官方文档：RADOS Operations</a></li></ul>
     </article>
-    <aside class="article-end"><img src="../img/yifei-portrait.jpg" alt=""><p><a href="../about/">刘一非</a> · 软件平台与工具链研发。本文是根据官方文档整理的学习笔记，未把概念整理写成个人生产环境实战。</p></aside>
+    <aside class="article-end"><span class="article-end-mark" aria-hidden="true">LYF</span><p><a href="../about/">刘一非</a> · 软件平台与工具链研发。本文是根据官方文档整理的学习笔记，未把概念整理写成个人生产环境实战。</p></aside>
     <footer class="article-footer"><a href="./">← 返回专题索引</a><a href="./cephadm-lab.html">下一篇：cephadm 实验路线 →</a></footer>
   </main>
   <footer class="notes-wrap notes-footer">© 2026 LIU YIFEI · SOURCE LINKS AT ARTICLE END</footer>

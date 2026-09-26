@@ -5,11 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Ceph 健康状态学习笔记：使用只读命令收集线索，按 MON、OSD、PG、容量分层排查。">
   <title>Ceph HEALTH_WARN 排查 · 刘一非</title>
-  <link rel="icon" href="../img/yifei-portrait.jpg" type="image/jpeg">
+  <link rel="icon" href="../img/favicon_head.png">
   <link rel="stylesheet" href="../css/notes.css">
 </head>
 <body>
-  <div class="notes-wrap"><nav class="notes-nav" aria-label="主导航"><a class="notes-brand" href="../"><img src="../img/yifei-portrait.jpg" alt="">刘一非 · 工程手记</a><div class="notes-links"><a href="./">专题索引</a><a href="../">博客首页</a><a href="https://yifeiliu-1997.github.io/lyf-profile/">简历 ↗</a></div></nav></div>
+  <div class="notes-wrap"><nav class="notes-nav" aria-label="主导航"><a class="notes-brand" href="../"><span class="notes-brand-mark"><img src="../img/yifei-portrait.jpg" alt=""></span>刘一非 · 工程手记</a><div class="notes-links"><a href="./">专题索引</a><a href="../">博客首页</a><a href="https://yifeiliu-1997.github.io/lyf-profile/">简历 ↗</a></div></nav></div>
   <main class="article">
     <header class="article-heading"><p class="article-kicker">STORAGE · OPERATIONS / 学习整理</p><h1>Ceph HEALTH_WARN：先观察，再定位</h1><p class="article-deck">健康告警是排查入口，不是诊断结论。建立只读证据链，区分集群映射、OSD、PG 和容量问题，再决定是否需要变更。</p><div class="article-meta"><time datetime="2026-09-26">整理于 2026-09-26</time><span>约 6 分钟</span><span>命令仅用于只读检查</span></div></header>
     <article class="article-content">
@@ -38,7 +38,7 @@ ceph orch ps</code></pre>
       <h2>官方参考</h2>
       <ul class="source-list"><li><a href="https://docs.ceph.com/en/latest/rados/operations/monitoring/" target="_blank" rel="noopener noreferrer">Ceph 官方文档：Monitoring a Cluster</a></li><li><a href="https://docs.ceph.com/en/latest/rados/operations/health-checks/" target="_blank" rel="noopener noreferrer">Ceph 官方文档：Health Checks</a></li><li><a href="https://docs.ceph.com/en/latest/cephadm/operations/" target="_blank" rel="noopener noreferrer">Ceph 官方文档：Cephadm Operations</a></li></ul>
     </article>
-    <aside class="article-end"><img src="../img/yifei-portrait.jpg" alt=""><p><a href="../about/">刘一非</a> · 软件平台与工具链研发。本文整理的是一套排查思路，不替代具体版本手册或线上变更审批。</p></aside>
+    <aside class="article-end"><span class="article-end-mark" aria-hidden="true">LYF</span><p><a href="../about/">刘一非</a> · 软件平台与工具链研发。本文整理的是一套排查思路，不替代具体版本手册或线上变更审批。</p></aside>
     <footer class="article-footer"><a href="./cephadm-lab.html">← 上一篇：cephadm 实验路线</a><a href="./ai-assisted-coding.html">下一篇：AI 辅助开发 →</a></footer>
   </main>
   <footer class="notes-wrap notes-footer">© 2026 LIU YIFEI · SOURCE LINKS AT ARTICLE END</footer>

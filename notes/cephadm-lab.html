@@ -5,11 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="学习笔记：用 cephadm 规划可复现 Ceph 实验环境的准备、bootstrap、主机接入与磁盘检查。">
   <title>cephadm 实验集群路线 · 刘一非</title>
-  <link rel="icon" href="../img/yifei-portrait.jpg" type="image/jpeg">
+  <link rel="icon" href="../img/favicon_head.png">
   <link rel="stylesheet" href="../css/notes.css">
 </head>
 <body>
-  <div class="notes-wrap"><nav class="notes-nav" aria-label="主导航"><a class="notes-brand" href="../"><img src="../img/yifei-portrait.jpg" alt="">刘一非 · 工程手记</a><div class="notes-links"><a href="./">专题索引</a><a href="../">博客首页</a><a href="https://yifeiliu-1997.github.io/lyf-profile/">简历 ↗</a></div></nav></div>
+  <div class="notes-wrap"><nav class="notes-nav" aria-label="主导航"><a class="notes-brand" href="../"><span class="notes-brand-mark"><img src="../img/yifei-portrait.jpg" alt=""></span>刘一非 · 工程手记</a><div class="notes-links"><a href="./">专题索引</a><a href="../">博客首页</a><a href="https://yifeiliu-1997.github.io/lyf-profile/">简历 ↗</a></div></nav></div>
   <main class="article">
     <header class="article-heading"><p class="article-kicker">STORAGE · LAB ROADMAP / 学习整理</p><h1>用 cephadm 规划一套可复现的实验集群</h1><p class="article-deck">先把环境和设备核对清楚，再 bootstrap、加主机、显式选择 OSD 设备，最后验证集群状态。实验步骤不是生产部署承诺。</p><div class="article-meta"><time datetime="2026-09-26">整理于 2026-09-26</time><span>约 7 分钟</span><span>仅作实验规划</span></div></header>
     <article class="article-content">
@@ -34,7 +34,7 @@ ceph orch device ls</code></pre>
       <h2>官方参考</h2>
       <ul class="source-list"><li><a href="https://docs.ceph.com/en/latest/cephadm/install/" target="_blank" rel="noopener noreferrer">Ceph 官方文档：Using Cephadm to Deploy a New Ceph Cluster</a></li><li><a href="https://docs.ceph.com/en/latest/cephadm/" target="_blank" rel="noopener noreferrer">Ceph 官方文档：Cephadm Guide</a></li></ul>
     </article>
-    <aside class="article-end"><img src="../img/yifei-portrait.jpg" alt=""><p><a href="../about/">刘一非</a> · 软件平台与工具链研发。本文为实验路线整理，不声称已完成 Ceph 生产集群部署。</p></aside>
+    <aside class="article-end"><span class="article-end-mark" aria-hidden="true">LYF</span><p><a href="../about/">刘一非</a> · 软件平台与工具链研发。本文为实验路线整理，不声称已完成 Ceph 生产集群部署。</p></aside>
     <footer class="article-footer"><a href="./ceph-architecture.html">← 上一篇：Ceph 架构</a><a href="./ceph-troubleshooting.html">下一篇：健康状态排查 →</a></footer>
   </main>
   <footer class="notes-wrap notes-footer">© 2026 LIU YIFEI · SOURCE LINKS AT ARTICLE END</footer>
