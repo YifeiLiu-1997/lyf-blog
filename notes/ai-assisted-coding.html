@@ -3,17 +3,18 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="AI 辅助开发与 Vibe Coding 工作流：明确任务边界、小步迭代、审查差异并验证结果。">
-  <title>AI 辅助开发闭环 · 刘一非</title>
+  <meta name="description" content="AI 辅助开发中的任务拆解、代码审查和测试验证记录。">
+  <title>AI 辅助开发：代码审查与测试 · 刘一非</title>
   <link rel="icon" href="../img/favicon_head.png">
   <link rel="stylesheet" href="../css/notes.css">
+  <link rel="stylesheet" href="../css/notes-polish.css">
 </head>
 <body>
   <div class="notes-wrap"><nav class="notes-nav" aria-label="主导航"><a class="notes-brand" href="../"><span class="notes-brand-mark"><img src="../img/yifei-portrait.jpg" alt=""></span>刘一非 · 工程手记</a><div class="notes-links"><a href="./">专题索引</a><a href="../">博客首页</a><a href="https://yifeiliu-1997.github.io/lyf-profile/">简历 ↗</a></div></nav></div>
   <main class="article">
-    <header class="article-heading"><p class="article-kicker">AI DEVELOPMENT · VIBE CODING / 2026</p><h1>Vibe Coding 不等于跳过工程：AI 辅助开发闭环</h1><p class="article-deck">工具可以加快探索和实现，但需求范围、代码责任与交付验证仍要由开发者把关。我的工具箱包括 Codex、WorkBuddy 和 Resonix。</p><div class="article-meta"><time datetime="2026">2026</time><span>约 6 分钟</span><span>AI 辅助，不是无人审查</span></div></header>
+    <header class="article-heading"><p class="article-kicker">AI-ASSISTED DEVELOPMENT · 2026</p><h1>AI 辅助开发：需求拆解、审查与测试</h1><p class="article-deck">记录使用 Codex、WorkBuddy、Resonix 等工具参与开发时的任务边界、代码审查与测试步骤。生成的代码仍需结合项目上下文检查。</p><div class="article-meta"><time datetime="2026">2026</time><span>约 6 分钟</span><span>人工审查与验证</span></div></header>
     <article class="article-content">
-      <p>我把 Vibe Coding 理解成一种高频的人机协作方式：先用自然语言建立目标，再通过运行结果持续调整。它适合快速探索和原型迭代，但“生成了代码”并不等于“功能正确”“改动安全”或“已经可以交付”。</p>
+      <p>这篇记录一次人机协作开发流程：先明确目标，再通过代码审查和测试确认结果。生成了代码不代表功能正确、改动安全或已经可以交付。</p>
       <h2>把一次协作拆成可检查的小步</h2>
       <ol><li><strong>先描述结果。</strong>说明用户遇到的问题、期望行为和验收方式，而不是只给一串技术名词。</li><li><strong>补足上下文。</strong>交代相关目录、现有约定、运行方式、兼容范围与不允许改动的边界。</li><li><strong>限制改动范围。</strong>优先让助手检查现状并提出最小实现，再逐步改文件；避免一次要求“大改整个系统”。</li><li><strong>自己看 diff。</strong>关注多余依赖、配置/权限变更、异常路径、硬编码密钥和不相关文件。</li><li><strong>用可复现的检查收尾。</strong>执行针对性测试、构建或静态验证；核对结果并记录尚未验证的部分。</li></ol>
       <h2>一个简洁的任务模板</h2>
@@ -35,6 +36,6 @@
     <aside class="article-end"><span class="article-end-mark" aria-hidden="true">LYF</span><p><a href="../about/">刘一非</a> · Python 平台、测试工具链与本地检索。AI 用来加速迭代，代码审查和测试仍由人负责。</p></aside>
     <footer class="article-footer"><a href="./ceph-troubleshooting.html">← 上一篇：Ceph 健康状态排查</a><a href="./">回到专题索引 →</a></footer>
   </main>
-  <footer class="notes-wrap notes-footer">© 2026 LIU YIFEI · HUMAN REVIEW IS PART OF THE LOOP</footer>
+  <footer class="notes-wrap notes-footer">© 2026 LIU YIFEI · AI-ASSISTED DEVELOPMENT</footer>
 </body>
 </html>

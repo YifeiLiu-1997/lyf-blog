@@ -3,16 +3,17 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="刘一非的工程专题笔记：Ceph 架构、cephadm 实验路线、集群健康排查和 AI 辅助开发工作流。">
-  <title>工程专题笔记 · 刘一非</title>
+  <meta name="description" content="刘一非的技术专题与问题记录：软件研发排查过程、Ceph 架构学习和 AI 辅助开发验证方式。">
+  <title>技术专题与问题记录 · 刘一非</title>
   <link rel="icon" href="../img/favicon_head.png">
   <link rel="stylesheet" href="../css/notes.css">
+  <link rel="stylesheet" href="../css/notes-polish.css">
 </head>
 <body>
   <div class="notes-wrap"><nav class="notes-nav" aria-label="主导航"><a class="notes-brand" href="../"><span class="notes-brand-mark"><img src="../img/yifei-portrait.jpg" alt=""></span>刘一非 · 工程手记</a><div class="notes-links"><a href="../">博客首页</a><a href="../archives/">原始归档</a><a href="https://yifeiliu-1997.github.io/lyf-profile/">个人简历 ↗</a></div></nav></div>
   <main class="notes-wrap">
-    <header class="notes-hero"><p class="notes-kicker">TECHNICAL NOTES / 2022 — 2026</p><h1>把原理弄清楚，<br><strong>再动手做。</strong></h1><p>沿着真实项目与技术栈记录五年实践：从 Linux、Python 和算法阅读，到平台研发、虚拟机 Agent、本地智能检索与 AI 协作。Ceph 专题聚焦架构学习和实验规划。</p></header>
-    <section class="timeline-index" aria-labelledby="timeline-title"><div class="timeline-index-heading"><div><p class="notes-kicker">PROJECT & LEARNING TIMELINE</p><h2 id="timeline-title">2022 — 2026 技术时间线</h2></div><p>按项目周期与年度学习主题浏览</p></div><div class="year-grid">
+    <header class="notes-hero"><p class="notes-kicker">TECHNICAL NOTES / 2022 — 2026</p><h1>技术专题与<br><strong>问题记录。</strong></h1><p>按项目和主题整理遇到的问题、排查步骤与实验结论。Ceph 内容为架构学习和实验规划，不代表生产部署经验。</p></header>
+    <section class="timeline-index" aria-labelledby="timeline-title"><div class="timeline-index-heading"><div><p class="notes-kicker">PROJECT TIMELINE</p><h2 id="timeline-title">2022 — 2026 技术时间线</h2></div><p>按项目周期和年度主题浏览</p></div><div class="year-grid">
       <a class="year-card" href="./timeline/2022.html"><span class="year-card-number">2022</span><strong>Linux · Python · 算法阅读</strong><span>6 篇技术记录 ↗</span></a>
       <a class="year-card" href="./timeline/2023.html"><span class="year-card-number">2023</span><strong>Django · React · 兼容性平台</strong><span>5 篇技术记录 ↗</span></a>
       <a class="year-card" href="./timeline/2024.html"><span class="year-card-number">2024</span><strong>Agent · 消息链路 · 测试工具</strong><span>5 篇技术记录 ↗</span></a>
@@ -23,7 +24,7 @@
       <a class="note-row" href="./ceph-architecture.html"><time datetime="2026">2026 · STORAGE</time><h3>Ceph 架构与数据放置：MON、OSD、PG、CRUSH</h3><p>从 RADOS 对象到副本 OSD，梳理控制面、数据面与故障域放置。</p><span>ARCHITECTURE · READ 6 MIN</span></a>
       <a class="note-row" href="./cephadm-lab.html"><time datetime="2026">2026 · LAB</time><h3>用 cephadm 规划一套可复现的实验集群</h3><p>部署前置检查、bootstrap、主机和磁盘核验，以及实验与生产的边界。</p><span>DEPLOYMENT · READ 7 MIN</span></a>
       <a class="note-row" href="./ceph-troubleshooting.html"><time datetime="2026">2026 · OPERATIONS</time><h3>Ceph HEALTH_WARN：先观察，再定位</h3><p>以只读状态命令建立证据链，按 MON、OSD、PG、容量逐层排查。</p><span>TROUBLESHOOTING · READ 6 MIN</span></a>
-      <a class="note-row" href="./ai-assisted-coding.html"><time datetime="2026">2026 · AI DEVELOPMENT</time><h3>Vibe Coding 不等于跳过工程：AI 辅助开发闭环</h3><p>用明确范围、小步实现、差异审查和测试，把生成速度接回交付质量。</p><span>CODEX · WORKBUDDY · RESONIX</span></a>
+      <a class="note-row" href="./ai-assisted-coding.html"><time datetime="2026">2026 · AI DEVELOPMENT</time><h3>AI 辅助开发：需求拆解、审查与测试</h3><p>记录任务边界、代码差异审查和针对性测试的操作步骤。</p><span>CODEX · WORKBUDDY · RESONIX</span></a>
     </div></section>
     <section class="archive-section" aria-labelledby="archive-title"><h2 id="archive-title">原始学习记录</h2><p>早期文章保留原页面日期，完整月份与分类可在旧归档中查看。</p><div class="archive-list">
       <a href="../2023/02/07/配置http协议文件服务器/"><time datetime="2023-02-07">2023.02.07</time><span>配置 HTTP 协议文件服务器</span></a>
@@ -40,7 +41,7 @@
       <a href="../archives/"><time>ARCHIVE</time><span>浏览完整原始归档 →</span></a>
     </div></section>
   </main>
-  <footer class="notes-wrap notes-footer">© <span data-year></span> LIU YIFEI · PROJECT & LEARNING TIMELINE</footer>
+  <footer class="notes-wrap notes-footer">© <span data-year></span> LIU YIFEI · TECHNICAL NOTES</footer>
   <script>document.querySelector('[data-year]').textContent = new Date().getFullYear();</script>
 </body>
 </html>
