@@ -1,8 +1,5 @@
 [
-  {"title":"Ceph 架构与数据放置：MON、OSD、PG、CRUSH","date":"2026-09-26T00:00:00.000Z","path":"notes/ceph-architecture.html","tags":[{"name":"Ceph","slug":"ceph","permalink":"https://yifeiliu-1997.github.io/lyf-blog/notes/"},{"name":"Linux","slug":"linux","permalink":"https://yifeiliu-1997.github.io/lyf-blog/notes/"}]},
-  {"title":"用 cephadm 规划一套可复现的实验集群","date":"2026-09-26T00:00:00.000Z","path":"notes/cephadm-lab.html","tags":[{"name":"Ceph","slug":"ceph","permalink":"https://yifeiliu-1997.github.io/lyf-blog/notes/"}]},
-  {"title":"Ceph HEALTH_WARN：先观察，再定位","date":"2026-09-26T00:00:00.000Z","path":"notes/ceph-troubleshooting.html","tags":[{"name":"Ceph","slug":"ceph","permalink":"https://yifeiliu-1997.github.io/lyf-blog/notes/"}]},
-  {"title":"Vibe Coding 不等于跳过工程：AI 辅助开发闭环","date":"2026-09-26T00:00:00.000Z","path":"notes/ai-assisted-coding.html","tags":[{"name":"AI","slug":"AI","permalink":"https://yifeiliu-1997.github.io/lyf-blog/notes/"},{"name":"Codex","slug":"codex","permalink":"https://yifeiliu-1997.github.io/lyf-blog/notes/"}]},
+  {"title":"测试","date":"2026-10-12T00:00:00.000Z","path":"article.html?slug=2026-10-12-%E6%B5%8B%E8%AF%95","tags":[]},
   {"title":"配置http协议文件服务器","date":"2023-02-07T08:23:35.000Z","path":"2023/02/07/配置http协议文件服务器/","tags":[{"name":"linux","slug":"linux","permalink":"https://yifeiliu-1997.github.io/lyf-blog/tags/linux/"}]},
   {"title":"Linux 常用指令（持续更新）","date":"2023-02-02T01:32:01.000Z","path":"2023/02/02/Linux-服务器配置/","tags":[{"name":"linux","slug":"linux","permalink":"https://yifeiliu-1997.github.io/lyf-blog/tags/linux/"}]},
   {"title":"人工智能研究方向","date":"2022-10-26T07:55:58.000Z","path":"2022/10/26/深度学习的几个方向/","tags":[{"name":"AI","slug":"AI","permalink":"https://yifeiliu-1997.github.io/lyf-blog/tags/AI/"}]},
