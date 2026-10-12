@@ -1,4 +1,5 @@
 import http from 'node:http';
+import { spawn } from 'node:child_process';
 import { randomUUID } from 'node:crypto';
 import { access, mkdir, readFile, rename, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
@@ -26,6 +27,11 @@ const imageTypes = new Map([
   ['image/gif', '.gif'],
   ['image/webp', '.webp']
 ]);
+const allowedOrigins = new Set([
+  'http://127.0.0.1:8766',
+  'http://localhost:8766',
+  'https://yifeiliu-1997.github.io'
+]);
 let publishQueue = Promise.resolve();
 
 function sendJson(response, status, value) {
@@ -50,6 +56,49 @@ async function readRequestBody(request, limit = 36 * 1024 * 1024) {
   } catch {
     throw Object.assign(new Error('请求内容不是有效的 JSON。'), { status: 400 });
   }
+}
+
+function runGit(args) {
+  return new Promise((resolve, reject) => {
+    const child = spawn('git', ['-c', 'http.version=HTTP/1.1', ...args], { cwd: siteRoot, windowsHide: true, stdio: ['ignore', 'pipe', 'pipe'] });
+    let stdout = '';
+    let stderr = '';
+    child.stdout.setEncoding('utf8');
+    child.stderr.setEncoding('utf8');
+    child.stdout.on('data', (chunk) => { stdout = `${stdout}${chunk}`.slice(-8000); });
+    child.stderr.on('data', (chunk) => { stderr = `${stderr}${chunk}`.slice(-8000); });
+    child.on('error', (error) => reject(error));
+    child.on('close', (code) => {
+      if (code === 0) resolve({ stdout, stderr });
+      else reject(Object.assign(new Error(stderr.trim() || stdout.trim() || `git ${args[0]} failed`), { code }));
+    });
+  });
+}
+
+async function syncBlogChanges(message) {
+  const paths = ['content.json', 'posts'];
+  await runGit(['add', '-A', '--', ...paths]);
+  const status = await runGit(['status', '--porcelain', '--', ...paths]);
+  if (status.stdout.trim()) await runGit(['commit', '--only', '-m', message, '--', ...paths]);
+  try {
+    await runGit(['pull', '--rebase', 'origin', 'gh-pages']);
+  } catch (error) {
+    try { await runGit(['rebase', '--abort']); } catch {}
+    throw error;
+  }
+  await runGit(['push', 'origin', 'gh-pages']);
+}
+
+async function pendingBlogChanges() {
+  const workingTree = await runGit(['status', '--porcelain', '--', 'content.json', 'posts']);
+  const ahead = await runGit(['rev-list', '--count', 'origin/gh-pages..HEAD']);
+  return Boolean(workingTree.stdout.trim() || Number(ahead.stdout.trim()) > 0);
+}
+
+function queueMutation(operation) {
+  const current = publishQueue.then(operation);
+  publishQueue = current.catch(() => {});
+  return current;
 }
 
 function makeSlug(title, date) {
@@ -159,7 +208,7 @@ async function createArticle(payload) {
     await writeFile(temporaryPath, `[\n${updatedContent.map((item) => `  ${JSON.stringify(item)}`).join(',\n')}\n]\n`, { flag: 'wx' });
     await rename(temporaryPath, contentPath);
     temporaryPath = '';
-    return entry;
+    return { entry, slug };
   } catch (error) {
     if (temporaryPath) await rm(temporaryPath, { force: true });
     await rm(postDirectory, { recursive: true, force: true });
@@ -167,10 +216,54 @@ async function createArticle(payload) {
   }
 }
 
-function queueArticle(payload) {
-  const current = publishQueue.then(() => createArticle(payload));
-  publishQueue = current.catch(() => {});
-  return current;
+async function publishArticle(payload) {
+  const { entry } = await createArticle(payload);
+  try {
+    await syncBlogChanges(`Publish blog post: ${entry.title}`);
+    return { article: entry, published: true };
+  } catch {
+    return { article: entry, published: false, error: '文章已写入本机，但 Git 提交或推送失败。可以重试同步。' };
+  }
+}
+
+async function deleteArticle(slug) {
+  if (!/^[\p{L}\p{N}-]{1,100}$/u.test(slug)) throw Object.assign(new Error('文章编号无效。'), { status: 400 });
+  const contentPath = path.join(siteRoot, 'content.json');
+  const content = JSON.parse(await readFile(contentPath, 'utf8'));
+  const expectedPath = `article.html?slug=${encodeURIComponent(slug)}`;
+  const entry = content.find((item) => item.path === expectedPath);
+  if (!entry) throw Object.assign(new Error('找不到这篇可管理的文章。'), { status: 404 });
+  const postDirectory = path.join(siteRoot, 'posts', slug);
+  try {
+    await access(path.join(postDirectory, 'article.json'));
+  } catch {
+    throw Object.assign(new Error('这篇文章不属于写作器管理的内容。'), { status: 404 });
+  }
+  const updatedContent = content.filter((item) => item !== entry);
+  const temporaryPath = `${contentPath}.${randomUUID()}.tmp`;
+  await writeFile(temporaryPath, `[` + (updatedContent.length ? `\n${updatedContent.map((item) => `  ${JSON.stringify(item)}`).join(',\n')}\n` : '') + `]\n`, { flag: 'wx' });
+  await rename(temporaryPath, contentPath);
+  await rm(postDirectory, { recursive: true, force: true });
+  try {
+    await syncBlogChanges(`Delete blog post: ${entry.title}`);
+    return { deleted: true, published: true };
+  } catch {
+    return { deleted: true, published: false, error: '文章已从本机移除，但 Git 提交或推送失败。可以重试同步。' };
+  }
+}
+
+function setApiCors(request, response) {
+  const origin = request.headers.origin;
+  if (origin && !allowedOrigins.has(origin)) return false;
+  if (origin) {
+    response.setHeader('Access-Control-Allow-Origin', origin);
+    response.setHeader('Vary', 'Origin');
+  }
+  response.setHeader('Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS');
+  response.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  response.setHeader('Access-Control-Allow-Private-Network', 'true');
+  response.setHeader('Access-Control-Max-Age', '600');
+  return true;
 }
 
 async function serveStatic(requestPath, method, response) {
@@ -211,7 +304,7 @@ async function serveStatic(requestPath, method, response) {
 
 const server = http.createServer(async (request, response) => {
   const host = String(request.headers.host || '').toLowerCase();
-  if (!host.startsWith('127.0.0.1:') && !host.startsWith('localhost:')) {
+  if (!['127.0.0.1:8766', 'localhost:8766'].includes(host)) {
     response.writeHead(403).end('Forbidden');
     return;
   }
@@ -222,21 +315,51 @@ const server = http.createServer(async (request, response) => {
     response.writeHead(400).end('Bad request');
     return;
   }
+  if (url.pathname.startsWith('/api/')) {
+    if (!setApiCors(request, response)) {
+      sendJson(response, 403, { error: '请求来源不受允许。' });
+      return;
+    }
+    if (request.method === 'OPTIONS') {
+      response.writeHead(204).end();
+      return;
+    }
+  }
   if (url.pathname === '/api/status' && request.method === 'GET') {
-    sendJson(response, 200, { writeEnabled: true });
+    try {
+      sendJson(response, 200, { writeEnabled: true, pushEnabled: true, pending: await pendingBlogChanges() });
+    } catch {
+      sendJson(response, 200, { writeEnabled: true, pushEnabled: true, pending: false });
+    }
     return;
   }
   if (url.pathname === '/api/articles' && request.method === 'POST') {
-    if (request.headers.origin && request.headers.origin.toLowerCase() !== `http://${host}`) {
-      sendJson(response, 403, { error: '请求来源不匹配。' });
-      return;
-    }
     try {
       const payload = await readRequestBody(request);
-      const article = await queueArticle(payload);
-      sendJson(response, 201, { article });
+      const result = await queueMutation(() => publishArticle(payload));
+      sendJson(response, result.published ? 201 : 202, result);
     } catch (error) {
       sendJson(response, error.status || 500, { error: error.status ? error.message : '保存失败，请检查站点文件和文章索引。' });
+    }
+    return;
+  }
+  const articleMatch = url.pathname.match(/^\/api\/articles\/([^/]+)$/);
+  if (articleMatch && request.method === 'DELETE') {
+    try {
+      const slug = decodeURIComponent(articleMatch[1]);
+      const result = await queueMutation(() => deleteArticle(slug));
+      sendJson(response, result.published ? 200 : 202, result);
+    } catch (error) {
+      sendJson(response, error.status || 500, { error: error.status ? error.message : '删除失败，请检查站点文件和文章索引。' });
+    }
+    return;
+  }
+  if (url.pathname === '/api/publish' && request.method === 'POST') {
+    try {
+      await queueMutation(() => syncBlogChanges('Sync technical blog changes'));
+      sendJson(response, 200, { published: true });
+    } catch {
+      sendJson(response, 502, { error: 'Git 推送失败。请检查 GitHub 登录、网络和仓库状态后重试。' });
     }
     return;
   }

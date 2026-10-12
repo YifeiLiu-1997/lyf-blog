@@ -69,7 +69,7 @@
           <p class="section-kicker">TOPICS</p>
           <div class="topic-list" id="topic-list"></div>
         </div>
-        <div class="aside-note"><span class="note-dot"></span><p>本地预览可直接写入博客目录。发布到 GitHub Pages 需要同步仓库。</p></div>
+        <div class="aside-note" aria-live="polite"><span class="note-dot"></span><div><p id="publisher-status">新增或删除文章时，需要连接本机发布器并推送到 GitHub。</p><button id="retry-publish" class="publisher-retry" type="button" hidden>重试 Git 推送</button></div></div>
       </aside>
     </div>
   </main>
@@ -84,7 +84,7 @@
         <div><p class="section-kicker">LOCAL EDITOR</p><h2 id="writer-title">写一篇技术博客</h2></div>
         <button class="icon-button close-writer" type="button" aria-label="关闭编辑器" title="关闭">×</button>
       </header>
-      <p class="writer-notice" id="writer-notice">草稿保存在当前浏览器，也可以导出 Markdown 和图片。</p>
+      <div class="writer-connection-row"><p class="writer-notice" id="writer-notice">草稿保存在当前浏览器，也可以导出 Markdown 和图片。</p><button id="connect-publisher" class="button button-secondary" type="button" hidden>连接本机发布器</button></div>
 
       <div class="writer-fields">
         <label class="field-label title-field">标题<input id="draft-title" type="text" maxlength="120" placeholder="输入文章标题" autocomplete="off"></label>

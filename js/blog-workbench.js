@@ -11,6 +11,9 @@
   const writerStatus = document.querySelector('#writer-status');
   const writerNotice = document.querySelector('#writer-notice');
   const publishButton = document.querySelector('#publish-article');
+  const connectPublisherButton = document.querySelector('#connect-publisher');
+  const publisherStatus = document.querySelector('#publisher-status');
+  const retryPublishButton = document.querySelector('#retry-publish');
   const preview = document.querySelector('#markdown-preview');
   const objectUrls = new Map();
   let databasePromise;
@@ -20,6 +23,8 @@
   let activeImages = [];
   let dirty = false;
   let publishAvailable = false;
+  let publisherBase = '';
+  const localPublisherPage = ['127.0.0.1', 'localhost'].includes(window.location.hostname) && window.location.port === '8766';
 
   function localDate() {
     const now = new Date();
@@ -92,6 +97,8 @@
   }
 
   function renderArticle(entry) {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'article-entry';
     const row = document.createElement('a');
     row.className = 'article-row';
     row.href = `./${entry.path}`;
@@ -110,7 +117,28 @@
     (entry.tags || []).forEach((item) => tags.append(createTag(item.name)));
     copy.append(heading, tags);
     row.append(date, copy);
-    return row;
+    wrapper.append(row);
+    const slug = articleSlug(entry);
+    if (publishAvailable && slug) {
+      const remove = document.createElement('button');
+      remove.className = 'article-delete';
+      remove.type = 'button';
+      remove.dataset.deleteArticle = slug;
+      remove.textContent = '删除';
+      remove.setAttribute('aria-label', `删除文章：${entry.title || '未命名文章'}`);
+      wrapper.append(remove);
+    }
+    return wrapper;
+  }
+
+  function articleSlug(entry) {
+    if (!String(entry.path || '').startsWith('article.html?slug=')) return '';
+    try {
+      const slug = new URL(entry.path, window.location.href).searchParams.get('slug') || '';
+      return /^[\p{L}\p{N}-]{1,100}$/u.test(slug) ? slug : '';
+    } catch {
+      return '';
+    }
   }
 
   function renderArticles() {
@@ -186,19 +214,68 @@
     renderTopics();
   }
 
+  function updatePublisherStatus(message, pending = false) {
+    publisherStatus.textContent = message;
+    retryPublishButton.hidden = !pending;
+  }
+
+  function setPublisherConnected(connected) {
+    publishAvailable = connected;
+    publishButton.hidden = !connected;
+    if (!localPublisherPage) {
+      connectPublisherButton.hidden = false;
+      connectPublisherButton.disabled = connected;
+      connectPublisherButton.textContent = connected ? '本机已连接' : '连接本机发布器';
+    }
+    renderArticles();
+  }
+
   async function checkLocalPublisher() {
+    if (!localPublisherPage) {
+      connectPublisherButton.hidden = false;
+      document.querySelector('#writer-notice').textContent = 'GitHub Pages 是静态站点。连接本机发布器后，保存和删除会提交并推送到 GitHub。';
+      updatePublisherStatus('连接本机发布器后，可从页面新增或删除文章并推送到 GitHub。');
+      return;
+    }
+    publisherBase = window.location.origin;
     try {
-      const response = await fetch('./api/status', { cache: 'no-store' });
+      const response = await fetch(`${publisherBase}/api/status`, { cache: 'no-store' });
       if (!response.ok) return;
       const status = await response.json();
-      publishAvailable = status.writeEnabled === true;
+      setPublisherConnected(status.writeEnabled === true && status.pushEnabled === true);
+      writerNotice.textContent = publishAvailable
+        ? '本机已连接。保存或删除文章后会提交并推送到 GitHub。'
+        : '草稿保存在当前浏览器，也可以导出 Markdown 和图片。';
+      updatePublisherStatus(status.pending
+        ? '检测到本机有尚未同步的博客更改。'
+        : publishAvailable ? '本机发布器已连接；文章变更会提交并推送到 GitHub。' : '本机发布器当前不可用。', status.pending === true);
     } catch {
-      publishAvailable = false;
+      setPublisherConnected(false);
+      updatePublisherStatus('本机发布器连接失败。');
     }
-    publishButton.hidden = !publishAvailable;
-    writerNotice.textContent = publishAvailable
-      ? '本地发布会生成 Markdown、图片和文章页；推送仓库后即可上线。'
-      : '草稿保存在当前浏览器。也可以导出 Markdown 和图片，再加入站点仓库。';
+  }
+
+  async function connectPublisher() {
+    publisherBase = 'http://127.0.0.1:8766';
+    connectPublisherButton.disabled = true;
+    connectPublisherButton.textContent = '正在连接…';
+    writerNotice.textContent = '正在连接本机发布器…';
+    try {
+      const response = await fetch(`${publisherBase}/api/status`, { cache: 'no-store' });
+      if (!response.ok) throw new Error('本机发布器未响应。');
+      const status = await response.json();
+      if (status.writeEnabled !== true || status.pushEnabled !== true) throw new Error('本机发布器不支持 Git 发布。');
+      setPublisherConnected(true);
+      writerNotice.textContent = '已连接本机；保存或删除后会通过 Git 提交并推送。';
+      updatePublisherStatus(status.pending ? '检测到本机有尚未同步的博客更改。' : '本机发布器已连接；文章变更会提交并推送到 GitHub。', status.pending === true);
+    } catch {
+      publisherBase = '';
+      setPublisherConnected(false);
+      connectPublisherButton.disabled = false;
+      connectPublisherButton.textContent = '连接本机发布器';
+      writerNotice.textContent = '连接失败。请先在本机启动博客发布器，再重试。';
+      updatePublisherStatus('本机发布器连接失败。请确认发布服务正在运行。');
+    }
   }
 
   function markDirty() {
@@ -434,13 +511,13 @@
         type: image.type,
         dataUrl: await blobAsDataUrl(image.blob)
       })));
-      const response = await fetch('./api/articles', {
+      const response = await fetch(`${publisherBase}/api/articles`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ title, date: dateField.value, body: editor.value, images })
       });
       const result = await response.json();
-      if (!response.ok) throw new Error(result.error || '保存文章失败。');
+      if (!response.ok && response.status !== 202) throw new Error(result.error || '保存文章失败。');
 
       articles = [result.article, ...articles].sort((a, b) => String(b.date).localeCompare(String(a.date)));
       document.querySelector('#article-count').textContent = `${articles.length} 篇文章`;
@@ -458,6 +535,13 @@
       dirty = false;
       dialog.close();
       resetWriter(null);
+      if (result.published) {
+        writerStatus.textContent = '文章已提交并推送到 GitHub。';
+        updatePublisherStatus('文章已提交并推送到 GitHub Pages。');
+      } else {
+        writerStatus.textContent = result.error || '文章已保存在本机，尚未推送。';
+        updatePublisherStatus(result.error || '文章已保存在本机，尚未推送。', true);
+      }
     } catch (error) {
       writerStatus.textContent = error.message || '保存文章失败，请稍后重试。';
     } finally {
@@ -481,6 +565,44 @@
     }
   }
 
+  async function deletePublishedArticle(slug, button) {
+    const article = articles.find((entry) => articleSlug(entry) === slug);
+    if (!article || !window.confirm(`删除文章“${article.title || '未命名文章'}”？这会从博客移除文章并推送到 GitHub。`)) return;
+    button.disabled = true;
+    updatePublisherStatus(`正在删除“${article.title}”…`);
+    try {
+      const response = await fetch(`${publisherBase}/api/articles/${encodeURIComponent(slug)}`, { method: 'DELETE' });
+      const result = await response.json();
+      if (!response.ok && response.status !== 202) throw new Error(result.error || '删除文章失败。');
+      articles = articles.filter((entry) => articleSlug(entry) !== slug);
+      document.querySelector('#article-count').textContent = `${articles.length} 篇文章`;
+      document.querySelector('#original-count').textContent = String(articles.length);
+      document.querySelector('#latest-date').textContent = formatDate(String(articles[0]?.date || '').slice(0, 10)) || '--';
+      renderArticles();
+      renderTopics();
+      if (result.published) updatePublisherStatus('文章已删除并推送到 GitHub Pages。');
+      else updatePublisherStatus(result.error || '文章已从本机移除，尚未推送。', true);
+    } catch (error) {
+      button.disabled = false;
+      updatePublisherStatus(error.message || '删除文章失败。');
+    }
+  }
+
+  async function retryPublish() {
+    retryPublishButton.disabled = true;
+    updatePublisherStatus('正在同步 GitHub…', true);
+    try {
+      const response = await fetch(`${publisherBase}/api/publish`, { method: 'POST' });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || 'Git 推送失败。');
+      updatePublisherStatus('本机博客内容已同步到 GitHub Pages。');
+    } catch (error) {
+      updatePublisherStatus(error.message || 'Git 推送失败。', true);
+    } finally {
+      retryPublishButton.disabled = false;
+    }
+  }
+
   document.querySelector('#open-writer').addEventListener('click', () => openWriter(null));
   document.querySelectorAll('.close-writer').forEach((button) => button.addEventListener('click', closeWriter));
   dialog.addEventListener('close', releaseObjectUrls);
@@ -492,10 +614,18 @@
   dateField.addEventListener('input', markDirty);
   editor.addEventListener('input', markDirty);
   document.querySelector('#save-draft').addEventListener('click', saveCurrentDraft);
+  connectPublisherButton.addEventListener('click', connectPublisher);
+  retryPublishButton.addEventListener('click', retryPublish);
   publishButton.addEventListener('click', publishCurrentArticle);
   document.querySelector('#export-draft').addEventListener('click', exportCurrentDraft);
   document.querySelector('#delete-draft').addEventListener('click', () => deleteDraft(activeDraftId));
   document.querySelector('#article-search').addEventListener('input', renderArticles);
+  document.querySelector('#article-list').addEventListener('click', (event) => {
+    const button = event.target.closest('[data-delete-article]');
+    if (!button) return;
+    event.preventDefault();
+    deletePublishedArticle(button.dataset.deleteArticle, button);
+  });
 
   document.querySelector('.format-tools').addEventListener('click', (event) => {
     const button = event.target.closest('[data-format]');
